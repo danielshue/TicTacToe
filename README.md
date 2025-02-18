@@ -23,7 +23,10 @@ Tic-Tac-Toe is a classic two-player game where players take turns marking a spac
 1. Ensure you have the .NET SDK installed on your machine.
 2. Clone the repository or download the project files.
 3. Open a terminal and navigate to the project directory.
-4. Run the following command to build the project:5. After a successful build, run the application using:
+4. Run the following command to build the project:            dotnet build		
+5. Publish the project using the command:                     dotnet publish -c Release --self-contained
+6. After a successful build, run the application using, selecting your architecture: [win-x64|win-arm64|linux-x64|osx-x64]:      						 	bin\Release\net9.0\win-arm64\publish\TicTacToe.exe 
+7. Follow the on-screen instructions to play the game.
 
 ## Game Rules
 1. The game is played on a 3x3 grid.
