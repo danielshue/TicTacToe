@@ -238,6 +238,9 @@ namespace TicTacToe
                             return;
                         }
                         break;
+                    case ConsoleKey.Escape:
+                        Environment.Exit(0);
+                        break;
                 }
 
                 Clear();
