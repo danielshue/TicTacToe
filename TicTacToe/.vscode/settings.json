@@ -1,0 +1,7 @@
+{
+    "chat.promptFiles": {
+        ".github/prompts": true
+    },
+    "github.copilot.chat.edits.codesearch.enabled": true,
+    "github.copilot.chat.reviewSelection.instructions": []
+}
