@@ -6,27 +6,31 @@ namespace TicTacToe
     public class Player
     {
         /// <summary>
-        /// Gets the symbol representing the player (e.g., 'X' or 'O').
-        /// </summary>
-        public char Symbol { get; }
-
-        /// <summary>
-        /// Gets or sets the name of the player.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of wins for the player.
+        /// Gets or sets the number of wins for this player.
         /// </summary>
         public int NumberOfWins { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Player"/> class with the specified symbol and name.
+        /// Gets the symbol (X or O) used by this player.
         /// </summary>
-        /// <param name="symbol">The symbol representing the player.</param>
-        /// <param name="name">The name of the player.</param>
+        public char Symbol { get; }
+
+        /// <summary>
+        /// Gets the name of this player.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Player"/> class.
+        /// </summary>
+        /// <param name="symbol">The symbol (X or O) used by this player.</param>
+        /// <param name="name">The name of this player.</param>
+        /// <exception cref="System.ArgumentException">Thrown when the symbol is not 'X' or 'O'.</exception>
         public Player(char symbol, string name)
         {
+            if (symbol != 'X' && symbol != 'O')
+                throw new System.ArgumentException("Symbol must be either 'X' or 'O'", nameof(symbol));
+
             Symbol = symbol;
             Name = name;
             NumberOfWins = 0;

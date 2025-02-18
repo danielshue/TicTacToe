@@ -43,22 +43,46 @@ namespace TicTacToe
     public class Game
     {
         private readonly ITickTacToeUI _userInterface;
-        private readonly ComputerPlayer _computerPlayer;
-        private readonly GameInitializer _gameInitializer;
-        private readonly ScoreManager _scoreManager;
+        private ComputerPlayer _computerPlayer;
+        private readonly IGameInitializer _gameInitializer;
+        private readonly IScoreManager _scoreManager;
+        private DifficultyLevel _difficultyLevel;
+
+        public bool ContinuePlaying {get;set;}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Game"/> class.
         /// </summary>
         /// <param name="userInterface">The user interface for the game.</param>
-        public Game(ITickTacToeUI userInterface)
+        /// <param name="difficultyLevel">The initial difficulty level for the game.</param>
+        /// <param name="gameInitializer">The game initializer service.</param>
+        public Game(ITickTacToeUI userInterface, DifficultyLevel difficultyLevel = DifficultyLevel.Hard, IGameInitializer gameInitializer = null)
         {
-            _userInterface = userInterface;
-            _computerPlayer = new ComputerPlayer(userInterface.Board);
-            _gameInitializer = new GameInitializer();
-            var (player1, player2, score) = _gameInitializer.InitializeGame(userInterface);
-            _userInterface.Score = score;
+            ContinuePlaying = true;
+            _userInterface = userInterface ?? throw new ArgumentNullException(nameof(userInterface));
+            _difficultyLevel = difficultyLevel;
+            _gameInitializer = gameInitializer ?? new GameInitializer();
+            
+            // Ensure we have a board
+            if (_userInterface.Board == null)
+            {
+                _userInterface.Board = new TickTacToeBoard();
+            }
+
+            // Initialize game state
+            var (player1, player2, score) = _gameInitializer.InitializeGame(_userInterface);
+            _userInterface.Score = score ?? throw new InvalidOperationException("Score cannot be null after initialization");
             _scoreManager = new ScoreManager(score);
+            _computerPlayer = new ComputerPlayer(_userInterface.Board, _difficultyLevel);
+        }
+
+        /// <summary>
+        /// Prompts the user to select a difficulty level and updates the computer player.
+        /// </summary>
+        private void UpdateDifficultyLevel()
+        {
+            _difficultyLevel = _userInterface.PromptDifficultyLevel();
+            _computerPlayer = new ComputerPlayer(_userInterface.Board, _difficultyLevel);
         }
 
         /// <summary>
@@ -66,22 +90,23 @@ namespace TicTacToe
         /// </summary>
         public void StartGame()
         {
-            while (true)
+            do
             {
+                UpdateDifficultyLevel();
                 PlayGame();
-
-                bool playAgain = _userInterface.PromptPlayAgain();
-
-                if (playAgain)
+                if (!_userInterface.PromptPlayAgain())
                 {
-                    _userInterface.Board.ClearBoard();
-                    _userInterface.Score.CurrentPlayer = _userInterface.Score.Player1;
+                    ContinuePlaying = false;
                 }
                 else
                 {
-                    break;
+                    _userInterface.Board.ClearBoard();
+                    if (_userInterface.Score != null)
+                    {
+                        _userInterface.Score.CurrentPlayer = _userInterface.Score.Player1;
+                    }
                 }
-            }
+            } while (ContinuePlaying);
         }
 
         /// <summary>
@@ -89,13 +114,11 @@ namespace TicTacToe
         /// </summary>
         private void PlayGame()
         {
-            while (true)
-            {
-                if (PerformMove(_userInterface.Score.CurrentPlayer))
-                {
-                    return;
-                }
+            if (_userInterface.Score?.CurrentPlayer == null)
+                throw new InvalidOperationException("Game state is not properly initialized");
 
+            while (!PerformMove(_userInterface.Score.CurrentPlayer))
+            {
                 _userInterface.Score.SwitchPlayer();
             }
         }
@@ -107,17 +130,16 @@ namespace TicTacToe
         /// <returns>True if the game has ended, false otherwise.</returns>
         private bool PerformMove(Player player)
         {
+            if (player == null)
+                throw new ArgumentNullException(nameof(player));
+
             _userInterface.DisplayScore();
             _userInterface.DisplayGameBoard();
 
-            if (player == _userInterface.Score.Player1)
-            {
+            if (player == _userInterface.Score?.Player1)
                 _userInterface.PlayerMove(player);
-            }
             else
-            {
                 _computerPlayer.MakeMove(player.Symbol);
-            }
 
             if (_userInterface.Board.CheckForWin(player.Symbol))
             {
@@ -127,13 +149,8 @@ namespace TicTacToe
                 _scoreManager.UpdateScore(player);
                 return true;
             }
-            if (_userInterface.Board.IsBoardFull())
-            {
-                _userInterface.HandleDraw();
-                return true;
-            }
 
-            if (player == _userInterface.Score.Player1 && _userInterface.Board.CountEmptyCells() == 1)
+            if (_userInterface.Board.IsBoardFull())
             {
                 _userInterface.HandleDraw();
                 return true;

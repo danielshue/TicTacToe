@@ -1,9 +1,7 @@
-using System;
-
 namespace TicTacToe
 {
     /// <summary>
-    /// Interface for _userInterface operations.
+    /// Interface for user interface operations.
     /// </summary>
     public interface ITickTacToeUI
     {
@@ -20,7 +18,7 @@ namespace TicTacToe
         /// <summary>
         /// Gets or sets the score of the game.
         /// </summary>
-        Score Score { get; set; }
+        IScore Score { get; set; }
 
         /// <summary>
         /// Gets or sets the game board.
@@ -56,13 +54,13 @@ namespace TicTacToe
         void DisplayGameBoard();
 
         /// <summary>
-        /// Displays a message indicating the specified player has won.
+        /// Displays a win message for the specified player.
         /// </summary>
-        /// <param name="player">The player who won.</param>
+        /// <param name="player">The winning player.</param>
         void DisplayPlayerWin(Player player);
 
         /// <summary>
-        /// Displays a message indicating the game is a draw.
+        /// Displays a draw message.
         /// </summary>
         void DisplayDraw();
 
@@ -75,48 +73,36 @@ namespace TicTacToe
         /// <summary>
         /// Reads input from the user.
         /// </summary>
-        /// <returns>The input from the user.</returns>
+        /// <returns>The user's input as a string.</returns>
         string ReadInput();
 
         /// <summary>
-        /// Sets the background color.
-        /// </summary>
-        /// <param name="color">The color to set.</param>
-        void SetBackgroundColor(string color);
-
-        /// <summary>
-        /// Sets the foreground color.
-        /// </summary>
-        /// <param name="color">The color to set.</param>
-        void SetForegroundColor(string color);
-
-        /// <summary>
-        /// Resets the color to the default.
-        /// </summary>
-        void ResetColor();
-
-        /// <summary>
-        /// Gets the player's name.
+        /// Gets the player's name from user input.
         /// </summary>
         /// <returns>The player's name.</returns>
         string GetPlayersName();
 
         /// <summary>
-        /// Handles the logic for a draw game.
+        /// Handles a draw game situation.
         /// </summary>
         void HandleDraw();
 
         /// <summary>
-        /// Displays the BoardArray with the current position highlighted.
+        /// Displays the board with optional position highlighting.
         /// </summary>
-        /// <param name="currentRow">The row of the current position.</param>
-        /// <param name="currentCol">The column of the current position.</param>
+        /// <param name="currentRow">The row to highlight.</param>
+        /// <param name="currentCol">The column to highlight.</param>
         void DisplayBoard(int currentRow, int currentCol);
 
         /// <summary>
-        /// Displays the BoardArray without highlighting any position.
+        /// Displays the board without highlighting.
         /// </summary>
         void Display();
 
+        /// <summary>
+        /// Prompts the user to select a difficulty level for the game.
+        /// </summary>
+        /// <returns>The selected difficulty level.</returns>
+        DifficultyLevel PromptDifficultyLevel();
     }
 }

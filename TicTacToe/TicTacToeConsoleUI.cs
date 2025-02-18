@@ -48,16 +48,10 @@ namespace TicTacToe
         public ITicTacToeBoard Board { get; set; }
 
         /// <inheritdoc />
-        public void Clear()
-        {
-            Console.Clear();
-        }
+        public void Clear() => Console.Clear();
 
         /// <inheritdoc />
-        public void SetCursorPosition(int left, int top)
-        {
-            Console.SetCursorPosition(left, top);
-        }
+        public void SetCursorPosition(int left, int top) => Console.SetCursorPosition(left, top);
 
         /// <inheritdoc />
         public void SetBackgroundColor(string color)
@@ -176,10 +170,7 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public void ResetColor()
-        {
-            Console.ResetColor();
-        }
+        public void ResetColor() => Console.ResetColor();
 
         /// <inheritdoc />
         public int WindowWidth => Console.WindowWidth;
@@ -191,7 +182,7 @@ namespace TicTacToe
         public int CurrentCol { get; set; }
 
         /// <inheritdoc />
-        public Score Score { get; set; }
+        public IScore Score { get; set; }
 
         /// <inheritdoc />
         public void DisplayScore()
@@ -250,10 +241,7 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public void DisplayGameBoard(int currentRow, int currentCol)
-        {
-            DisplayBoard(currentRow, currentCol);
-        }
+        public void DisplayGameBoard(int currentRow, int currentCol) => DisplayBoard(currentRow, currentCol);
 
         /// <inheritdoc />
         public void DisplayGameBoard()
@@ -263,16 +251,10 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public void DisplayPlayerWin(Player player)
-        {
-            Console.WriteLine($"{player.Name} wins!");
-        }
+        public void DisplayPlayerWin(Player player) => Console.WriteLine($"{player.Name} wins!");
 
         /// <inheritdoc />
-        public void DisplayDraw()
-        {
-            Console.WriteLine("It's a draw!");
-        }
+        public void DisplayDraw() => Console.WriteLine("It's a draw!");
 
         /// <inheritdoc />
         public bool PromptPlayAgain()
@@ -293,10 +275,7 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public string ReadInput()
-        {
-            return Console.ReadLine();
-        }
+        public string ReadInput() => Console.ReadLine();
 
         /// <inheritdoc />
         public string GetPlayersName()
@@ -356,10 +335,7 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public void Display()
-        {
-            DisplayBoard(-1, -1);
-        }
+        public void Display() => DisplayBoard(-1, -1);
 
         /// <summary>
         /// Shows the cursor in the console.
@@ -369,10 +345,7 @@ namespace TicTacToe
         /// cursor visible in the console. It is typically used when user input is required, such as 
         /// when prompting the player for their name or asking if they want to play again.
         /// </remarks>
-        private void ShowCursor()
-        {
-            Console.CursorVisible = true;
-        }
+        private void ShowCursor() => Console.CursorVisible = true;
 
         /// <summary>
         /// Hides the cursor in the console.
@@ -382,10 +355,38 @@ namespace TicTacToe
         /// invisible in the console. It is typically used to improve the visual appearance of the console 
         /// during game play, where the cursor might otherwise be distracting.
         /// </remarks>
-        private void HideCursor()
-        {
-            Console.CursorVisible = false;
-        }
+        private void HideCursor() => Console.CursorVisible = false;
 
+        /// <inheritdoc />
+        public DifficultyLevel PromptDifficultyLevel()
+        {
+            Clear();
+            Console.WriteLine("Select difficulty level:");
+            Console.WriteLine("1. Easy");
+            Console.WriteLine("2. Medium");
+            Console.WriteLine("3. Hard");
+            
+            ShowCursor();
+            
+            while (true)
+            {
+                string input = ReadInput().Trim();
+                switch (input)
+                {
+                    case "1":
+                        HideCursor();
+                        return DifficultyLevel.Easy;
+                    case "2":
+                        HideCursor();
+                        return DifficultyLevel.Medium;
+                    case "3":
+                        HideCursor();
+                        return DifficultyLevel.Hard;
+                    default:
+                        Console.WriteLine("Invalid input. Please enter 1, 2, or 3:");
+                        break;
+                }
+            }
+        }
     }
 }

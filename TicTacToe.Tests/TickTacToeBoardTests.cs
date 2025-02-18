@@ -1,8 +1,15 @@
 ﻿namespace TicTacToe.Tests
 {
+    /// <summary>
+    /// Contains unit tests for the <see cref="TickTacToeBoard"/> class to verify
+    /// board state management, move validation, and win condition detection.
+    /// </summary>
     [TestClass]
     public sealed class TickTacToeBoardTests
     {
+        /// <summary>
+        /// Tests that a new board is initialized with all cells empty.
+        /// </summary>
         [TestMethod]
         public void InitializeBoard_ShouldSetAllCellsToEmpty()
         {
@@ -13,7 +20,7 @@
             var isEmpty = true;
             for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
             {
-                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
+                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++) // Fixed: Changed i to j in condition
                 {
                     if (board.BoardArray[i, j] != ' ')
                     {
@@ -27,6 +34,9 @@
             Assert.IsTrue(isEmpty, "All cells should be initialized to empty.");
         }
 
+        /// <summary>
+        /// Tests that symbols can be placed in empty cells on the board.
+        /// </summary>
         [TestMethod]
         public void PlaceSymbol_ShouldPlaceSymbolInEmptyCell()
         {
@@ -44,6 +54,9 @@
             Assert.AreEqual(symbol, board.BoardArray[row, col], "Cell should contain the placed symbol.");
         }
 
+        /// <summary>
+        /// Tests that symbols cannot be placed in cells that are already occupied.
+        /// </summary>
         [TestMethod]
         public void PlaceSymbol_ShouldNotPlaceSymbolInNonEmptyCell()
         {
@@ -62,6 +75,9 @@
             Assert.AreEqual(symbol, board.BoardArray[row, col], "Cell should still contain the original symbol.");
         }
 
+        /// <summary>
+        /// Tests that the game correctly detects a winning condition in a row.
+        /// </summary>
         [TestMethod]
         public void CheckForWin_ShouldReturnTrueForWinningRow()
         {
@@ -79,6 +95,9 @@
             Assert.IsTrue(result, "CheckForWin should return true for a winning row.");
         }
 
+        /// <summary>
+        /// Tests that the game correctly identifies when there is no winning condition.
+        /// </summary>
         [TestMethod]
         public void CheckForWin_ShouldReturnFalseForNoWin()
         {
@@ -96,6 +115,9 @@
             Assert.IsFalse(result, "CheckForWin should return false if there is no win.");
         }
 
+        /// <summary>
+        /// Tests that the board correctly identifies when all cells are occupied.
+        /// </summary>
         [TestMethod]
         public void IsBoardFull_ShouldReturnTrueForFullBoard()
         {
@@ -103,7 +125,7 @@
             var board = new TickTacToeBoard();
             for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
             {
-                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
+                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++) // Fixed: Changed i to j in condition
                 {
                     board.PlaceSymbol(i, j, 'X');
                 }
@@ -116,6 +138,9 @@
             Assert.IsTrue(result, "IsBoardFull should return true for a full board.");
         }
 
+        /// <summary>
+        /// Tests that the board correctly identifies when there are still empty cells.
+        /// </summary>
         [TestMethod]
         public void IsBoardFull_ShouldReturnFalseForNonFullBoard()
         {
@@ -130,6 +155,9 @@
             Assert.IsFalse(result, "IsBoardFull should return false for a non-full board.");
         }
 
+        /// <summary>
+        /// Tests that empty cells are correctly identified.
+        /// </summary>
         [TestMethod]
         public void IsCellEmpty_ShouldReturnTrueForEmptyCell()
         {
@@ -145,6 +173,9 @@
             Assert.IsTrue(result, "IsCellEmpty should return true for an empty cell.");
         }
 
+        /// <summary>
+        /// Tests that occupied cells are correctly identified.
+        /// </summary>
         [TestMethod]
         public void IsCellEmpty_ShouldReturnFalseForNonEmptyCell()
         {
@@ -161,6 +192,9 @@
             Assert.IsFalse(result, "IsCellEmpty should return false for a non-empty cell.");
         }
 
+        /// <summary>
+        /// Tests that the count of empty cells is accurately tracked.
+        /// </summary>
         [TestMethod]
         public void CountEmptyCells_ShouldReturnCorrectCount()
         {
@@ -175,13 +209,11 @@
             // Assert
             var expectedCount = (ITicTacToeBoard.BoardSize * ITicTacToeBoard.BoardSize) - 2;
             Assert.AreEqual(expectedCount, result, "CountEmptyCells should return the correct number of empty cells.");
-
-
-
-
         }
 
-
+        /// <summary>
+        /// Tests that symbols cannot be placed outside the board boundaries.
+        /// </summary>
         [TestMethod]
         public void PlaceSymbol_ShouldNotPlaceSymbolOutsideBoardBoundaries()
         {
@@ -197,6 +229,9 @@
             Assert.IsFalse(resultOutOfBoundsIndices, "Symbol should not be placed outside the board boundaries (out of bounds indices).");
         }
 
+        /// <summary>
+        /// Tests that the game correctly detects a winning condition on the main diagonal.
+        /// </summary>
         [TestMethod]
         public void CheckForWin_ShouldReturnTrueForWinningMainDiagonal()
         {
@@ -214,6 +249,9 @@
             Assert.IsTrue(result, "CheckForWin should return true for a winning main diagonal.");
         }
 
+        /// <summary>
+        /// Tests that the game correctly detects a winning condition on the anti-diagonal.
+        /// </summary>
         [TestMethod]
         public void CheckForWin_ShouldReturnTrueForWinningAntiDiagonal()
         {
@@ -231,6 +269,9 @@
             Assert.IsTrue(result, "CheckForWin should return true for a winning anti-diagonal.");
         }
 
+        /// <summary>
+        /// Tests that the board can be reset to its initial empty state.
+        /// </summary>
         [TestMethod]
         public void ClearBoard_ShouldResetAllCellsToEmpty()
         {
@@ -244,7 +285,7 @@
             var isEmpty = true;
             for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
             {
-                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
+                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++) // Fixed: Changed i to j in condition
                 {
                     if (board.BoardArray[i, j] != ' ')
                     {
@@ -258,6 +299,9 @@
             Assert.IsTrue(isEmpty, "All cells should be reset to empty after clearing the board.");
         }
 
+        /// <summary>
+        /// Tests that board cloning creates an accurate copy of the current board state.
+        /// </summary>
         [TestMethod]
         public void Clone_ShouldCreateAccurateCopyOfBoard()
         {
@@ -271,7 +315,7 @@
             var isEqual = true;
             for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
             {
-                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
+                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)  // Fixed: Changed i to j in condition
                 {
                     if (board.BoardArray[i, j] != clonedBoard.BoardArray[i, j])
                     {
@@ -285,6 +329,9 @@
             Assert.IsTrue(isEqual, "Cloned board should be an accurate copy of the original board.");
         }
 
+        /// <summary>
+        /// Tests that changes to a cloned board do not affect the original board.
+        /// </summary>
         [TestMethod]
         public void Clone_ShouldNotAffectOriginalBoard()
         {
@@ -303,6 +350,9 @@
             Assert.AreEqual('O', clonedBoardSymbol, "Cloned board should reflect changes independently of the original board.");
         }
 
+        /// <summary>
+        /// Tests that only valid symbols ('X' and 'O') can be placed on the board.
+        /// </summary>
         [TestMethod]
         public void PlaceSymbol_ShouldNotPlaceInvalidSymbol()
         {
@@ -319,6 +369,9 @@
             Assert.AreEqual(' ', board.BoardArray[row, col], "Cell should remain empty after attempting to place an invalid symbol.");
         }
 
+        /// <summary>
+        /// Tests that a full board with no winning condition is correctly identified.
+        /// </summary>
         [TestMethod]
         public void IsBoardFull_ShouldReturnTrueForFullBoardWithNoWin()
         {

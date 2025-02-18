@@ -16,18 +16,18 @@ namespace TicTacToe
     /// Here are the key responsibilities of the TickTacToeBoard class:
     /// 
     /// 1.	Initialization:
-    ///     •	Initializes the board with empty cells.
-    ///     •	Provides constructors for creating a new board or initializing with a specified state.
+    ///     ï¿½	Initializes the board with empty cells.
+    ///     ï¿½	Provides constructors for creating a new board or initializing with a specified state.
     ///     
     /// 2.	State Management:
-    ///     •	Manages the board array(BoardArray) and its size(BoardSize).
-    ///     •	Provides methods to clear the board and clone the board state.
+    ///     ï¿½	Manages the board array(BoardArray) and its size(BoardSize).
+    ///     ï¿½	Provides methods to clear the board and clone the board state.
     ///     
     /// 3.	Game Logic:
-    ///     •	Places symbols on the board.
-    ///     •	Checks for win conditions(rows, columns, diagonals).
-    ///     •	Checks if the board is full or if a cell is empty.
-    ///     •	Counts the number of empty cells.
+    ///     ï¿½	Places symbols on the board.
+    ///     ï¿½	Checks for win conditions(rows, columns, diagonals).
+    ///     ï¿½	Checks if the board is full or if a cell is empty.
+    ///     ï¿½	Counts the number of empty cells.
     /// 
     /// The class does not include any display or user interface logic, which is appropriate.
     /// Display logic should be handled by a separate class, such as TickTacToeConsoleUI, to maintain a clear 
@@ -40,19 +40,13 @@ namespace TicTacToe
         /// <summary>
         /// Initializes a new instance of the <see cref="TickTacToeBoard"/> class.
         /// </summary>
-        public TickTacToeBoard()
-        {
-            Initialize();
-        }
+        public TickTacToeBoard() => Initialize();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TickTacToeBoard"/> class with a specified board state.
         /// </summary>
         /// <param name="board">The board array state to initialize with.</param>
-        public TickTacToeBoard(char[,] board)
-        {
-            BoardArray = (char[,])board.Clone();
-        }
+        public TickTacToeBoard(char[,] board) => BoardArray = (char[,])board.Clone();
 
         /// <inheritdoc />
         public char[,] BoardArray { get; set; }
@@ -73,25 +67,16 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public ITicTacToeBoard Clone()
-        {
-            return new TickTacToeBoard(BoardArray);
-        }
+        public ITicTacToeBoard Clone() => new TickTacToeBoard(BoardArray);
 
         /// <inheritdoc />
         public bool PlaceSymbol(int row, int col, char playerSymbol)
         {
             // Validate the player symbol
-            if (playerSymbol != 'X' && playerSymbol != 'O')
-            {
-                return false;
-            }
+            if (playerSymbol != 'X' && playerSymbol != 'O') return false;
 
             // Validate the position and check if the cell is empty
-            if (row < 0 || row >= ITicTacToeBoard.BoardSize || col < 0 || col >= ITicTacToeBoard.BoardSize || BoardArray[row, col] != ' ')
-            {
-                return false;
-            }
+            if (row < 0 || row >= ITicTacToeBoard.BoardSize || col < 0 || col >= ITicTacToeBoard.BoardSize || BoardArray[row, col] != ' ') return false;
 
             BoardArray[row, col] = playerSymbol;
             return true;
@@ -104,18 +89,12 @@ namespace TicTacToe
             for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
             {
                 if ((BoardArray[i, 0] == playerSymbol && BoardArray[i, 1] == playerSymbol && BoardArray[i, 2] == playerSymbol) ||
-                    (BoardArray[0, i] == playerSymbol && BoardArray[1, i] == playerSymbol && BoardArray[2, i] == playerSymbol))
-                {
-                    return true;
-                }
+                    (BoardArray[0, i] == playerSymbol && BoardArray[1, i] == playerSymbol && BoardArray[2, i] == playerSymbol)) return true;
             }
 
             // Check diagonals
             if ((BoardArray[0, 0] == playerSymbol && BoardArray[1, 1] == playerSymbol && BoardArray[2, 2] == playerSymbol) ||
-                (BoardArray[0, 2] == playerSymbol && BoardArray[1, 1] == playerSymbol && BoardArray[2, 0] == playerSymbol))
-            {
-                return true;
-            }
+                (BoardArray[0, 2] == playerSymbol && BoardArray[1, 1] == playerSymbol && BoardArray[2, 0] == playerSymbol)) return true;
 
             return false;
         }
@@ -127,20 +106,14 @@ namespace TicTacToe
             {
                 for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
                 {
-                    if (BoardArray[i, j] == ' ')
-                    {
-                        return false;
-                    }
+                    if (BoardArray[i, j] == ' ') return false;
                 }
             }
             return true;
         }
 
         /// <inheritdoc />
-        public bool IsCellEmpty(int row, int col)
-        {
-            return BoardArray[row, col] == ' ';
-        }
+        public bool IsCellEmpty(int row, int col) => BoardArray[row, col] == ' ';
 
         /// <inheritdoc />
         public int CountEmptyCells()
@@ -150,19 +123,13 @@ namespace TicTacToe
             {
                 for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
                 {
-                    if (IsCellEmpty(i, j))
-                    {
-                        emptyCells++;
-                    }
+                    if (IsCellEmpty(i, j)) emptyCells++;
                 }
             }
             return emptyCells;
         }
 
         /// <inheritdoc />
-        public void ClearBoard()
-        {
-            Initialize();
-        }
+        public void ClearBoard() => Initialize();
     }
 }
