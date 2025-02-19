@@ -33,25 +33,28 @@ namespace TicTacToe
     /// </remarks>
     public class TicTacToeConsoleUI : ITickTacToeUI
     {
+        private readonly IConsole _console;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TicTacToeConsoleUI"/> class.
         /// </summary>
         /// <param name="board">The Tic-Tac-Toe board.</param>
-        public TicTacToeConsoleUI(ITicTacToeBoard board)
+        public TicTacToeConsoleUI(ITicTacToeBoard board, IConsole console = null)
         {
             CurrentRow = 0;
             CurrentCol = 0;
             Board = board;
+            _console = console ?? new SystemConsole();
         }
 
         /// <inheritdoc />
         public ITicTacToeBoard Board { get; set; }
 
         /// <inheritdoc />
-        public void Clear() => Console.Clear();
+        public void Clear() => _console.Clear();
 
         /// <inheritdoc />
-        public void SetCursorPosition(int left, int top) => Console.SetCursorPosition(left, top);
+        public void SetCursorPosition(int left, int top) => _console.SetCursorPosition(left, top);
 
         /// <inheritdoc />
         public void SetBackgroundColor(string color)
@@ -59,52 +62,52 @@ namespace TicTacToe
             switch (color.ToLower())
             {
                 case "black":
-                    Console.BackgroundColor = ConsoleColor.Black;
+                    _console.BackgroundColor = ConsoleColor.Black;
                     break;
                 case "blue":
-                    Console.BackgroundColor = ConsoleColor.Blue;
+                    _console.BackgroundColor = ConsoleColor.Blue;
                     break;
                 case "cyan":
-                    Console.BackgroundColor = ConsoleColor.Cyan;
+                    _console.BackgroundColor = ConsoleColor.Cyan;
                     break;
                 case "darkblue":
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    _console.BackgroundColor = ConsoleColor.DarkBlue;
                     break;
                 case "darkcyan":
-                    Console.BackgroundColor = ConsoleColor.DarkCyan;
+                    _console.BackgroundColor = ConsoleColor.DarkCyan;
                     break;
                 case "darkgray":
-                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    _console.BackgroundColor = ConsoleColor.DarkGray;
                     break;
                 case "darkgreen":
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    _console.BackgroundColor = ConsoleColor.DarkGreen;
                     break;
                 case "darkmagenta":
-                    Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                    _console.BackgroundColor = ConsoleColor.DarkMagenta;
                     break;
                 case "darkred":
-                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    _console.BackgroundColor = ConsoleColor.DarkRed;
                     break;
                 case "darkyellow":
-                    Console.BackgroundColor = ConsoleColor.DarkYellow;
+                    _console.BackgroundColor = ConsoleColor.DarkYellow;
                     break;
                 case "gray":
-                    Console.BackgroundColor = ConsoleColor.Gray;
+                    _console.BackgroundColor = ConsoleColor.Gray;
                     break;
                 case "green":
-                    Console.BackgroundColor = ConsoleColor.Green;
+                    _console.BackgroundColor = ConsoleColor.Green;
                     break;
                 case "magenta":
-                    Console.BackgroundColor = ConsoleColor.Magenta;
+                    _console.BackgroundColor = ConsoleColor.Magenta;
                     break;
                 case "red":
-                    Console.BackgroundColor = ConsoleColor.Red;
+                    _console.BackgroundColor = ConsoleColor.Red;
                     break;
                 case "white":
-                    Console.BackgroundColor = ConsoleColor.White;
+                    _console.BackgroundColor = ConsoleColor.White;
                     break;
                 case "yellow":
-                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    _console.BackgroundColor = ConsoleColor.Yellow;
                     break;
                 default:
                     throw new ArgumentException("Invalid color");
@@ -117,52 +120,52 @@ namespace TicTacToe
             switch (color.ToLower())
             {
                 case "black":
-                    Console.ForegroundColor = ConsoleColor.Black;
+                    _console.ForegroundColor = ConsoleColor.Black;
                     break;
                 case "blue":
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    _console.ForegroundColor = ConsoleColor.Blue;
                     break;
                 case "cyan":
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    _console.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 case "darkblue":
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    _console.ForegroundColor = ConsoleColor.DarkBlue;
                     break;
                 case "darkcyan":
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    _console.ForegroundColor = ConsoleColor.DarkCyan;
                     break;
                 case "darkgray":
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
                 case "darkgreen":
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    _console.ForegroundColor = ConsoleColor.DarkGreen;
                     break;
                 case "darkmagenta":
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    _console.ForegroundColor = ConsoleColor.DarkMagenta;
                     break;
                 case "darkred":
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    _console.ForegroundColor = ConsoleColor.DarkRed;
                     break;
                 case "darkyellow":
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    _console.ForegroundColor = ConsoleColor.DarkYellow;
                     break;
                 case "gray":
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    _console.ForegroundColor = ConsoleColor.Gray;
                     break;
                 case "green":
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    _console.ForegroundColor = ConsoleColor.Green;
                     break;
                 case "magenta":
-                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    _console.ForegroundColor = ConsoleColor.Magenta;
                     break;
                 case "red":
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    _console.ForegroundColor = ConsoleColor.Red;
                     break;
                 case "white":
-                    Console.ForegroundColor = ConsoleColor.White;
+                    _console.ForegroundColor = ConsoleColor.White;
                     break;
                 case "yellow":
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    _console.ForegroundColor = ConsoleColor.Yellow;
                     break;
                 default:
                     throw new ArgumentException("Invalid color");
@@ -170,10 +173,10 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public void ResetColor() => Console.ResetColor();
+        public void ResetColor() => _console.ResetColor();
 
         /// <inheritdoc />
-        public int WindowWidth => Console.WindowWidth;
+        public int WindowWidth => _console.WindowWidth;
 
         /// <inheritdoc />
         public int CurrentRow { get; set; }
@@ -195,11 +198,11 @@ namespace TicTacToe
             SetBackgroundColor(ConsoleColor.White.ToString());
             SetForegroundColor(ConsoleColor.Black.ToString());
             SetCursorPosition(0, 0);
-            Console.WriteLine(new string(' ', screenWidth));
+            _console.WriteLine(new string(' ', screenWidth));
             SetCursorPosition(padding, 0);
-            Console.Write(Score.ToString());
+            _console.Write(Score.ToString());
             ResetColor();
-            Console.WriteLine(""); // Add an empty line after the score
+            _console.WriteLine(""); // Add an empty line after the score
         }
 
         /// <inheritdoc />
@@ -207,7 +210,7 @@ namespace TicTacToe
         {
             while (true)
             {
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                ConsoleKeyInfo keyInfo = _console.ReadKey(true);
 
                 switch (keyInfo.Key)
                 {
@@ -247,19 +250,19 @@ namespace TicTacToe
         public void DisplayGameBoard()
         {
             Display();
-            Console.WriteLine("\n\n");
+            _console.WriteLine("\n\n");
         }
 
         /// <inheritdoc />
-        public void DisplayPlayerWin(Player player) => Console.WriteLine($"{player.Name} wins!");
+        public void DisplayPlayerWin(Player player) => _console.WriteLine($"{player.Name} wins!");
 
         /// <inheritdoc />
-        public void DisplayDraw() => Console.WriteLine("It's a draw!");
+        public void DisplayDraw() => _console.WriteLine("It's a draw!");
 
         /// <inheritdoc />
         public bool PromptPlayAgain()
         {
-            Console.Write("Do you want to play again? (y/n) ");
+            _console.Write("Do you want to play again? (y/n) ");
 
             ShowCursor();
 
@@ -275,14 +278,14 @@ namespace TicTacToe
         }
 
         /// <inheritdoc />
-        public string ReadInput() => Console.ReadLine();
+        public string ReadInput() => _console.ReadLine();
 
         /// <inheritdoc />
         public string GetPlayersName()
         {
             ShowCursor();
 
-            Console.Write("Enter your name: ");
+            _console.Write("Enter your name: ");
 
             string playerName = ReadInput();
 
@@ -322,15 +325,16 @@ namespace TicTacToe
                         SetForegroundColor(ConsoleColor.Blue.ToString());
                     }
 
-                    Console.Write(Board.BoardArray[i, j].ToString());
+                    _console.Write(Board.BoardArray[i, j].ToString());
+                    
                     ResetColor();
 
-                    if (j < ITicTacToeBoard.BoardSize - 1) Console.Write("|");
+                    if (j < ITicTacToeBoard.BoardSize - 1) _console.Write("|");
                 }
 
-                Console.WriteLine("");
+                _console.WriteLine("");
 
-                if (i < ITicTacToeBoard.BoardSize - 1) Console.WriteLine("-----");
+                if (i < ITicTacToeBoard.BoardSize - 1) _console.WriteLine("-----");
             }
         }
 
@@ -345,7 +349,7 @@ namespace TicTacToe
         /// cursor visible in the console. It is typically used when user input is required, such as 
         /// when prompting the player for their name or asking if they want to play again.
         /// </remarks>
-        private void ShowCursor() => Console.CursorVisible = true;
+        private void ShowCursor() => _console.CursorVisible = true;
 
         /// <summary>
         /// Hides the cursor in the console.
@@ -355,16 +359,16 @@ namespace TicTacToe
         /// invisible in the console. It is typically used to improve the visual appearance of the console 
         /// during game play, where the cursor might otherwise be distracting.
         /// </remarks>
-        private void HideCursor() => Console.CursorVisible = false;
+        private void HideCursor() => _console.CursorVisible = false;
 
         /// <inheritdoc />
         public DifficultyLevel PromptDifficultyLevel()
         {
             Clear();
-            Console.WriteLine("Select difficulty level:");
-            Console.WriteLine("1. Easy");
-            Console.WriteLine("2. Medium");
-            Console.WriteLine("3. Hard");
+            _console.WriteLine("Select difficulty level:");
+            _console.WriteLine("1. Easy");
+            _console.WriteLine("2. Medium");
+            _console.WriteLine("3. Hard");
             
             ShowCursor();
             
@@ -383,7 +387,7 @@ namespace TicTacToe
                         HideCursor();
                         return DifficultyLevel.Hard;
                     default:
-                        Console.WriteLine("Invalid input. Please enter 1, 2, or 3:");
+                        _console.WriteLine("Invalid input. Please enter 1, 2, or 3:");
                         break;
                 }
             }

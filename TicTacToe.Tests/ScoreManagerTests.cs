@@ -12,6 +12,13 @@ namespace TicTacToe.Tests
         private Player _player2;
         private Score _score;
 
+        public ScoreManagerTests() {
+            _player1 = new Player('X', "Player1");
+            _player2 = new Player('O', "Player2");
+            _score = new Score(_player1, _player2);
+            _scoreManager = new ScoreManager(_score);
+        }
+
         /// <summary>
         /// Initializes test environment before each test.
         /// Creates two players, a score object, and a score manager instance.

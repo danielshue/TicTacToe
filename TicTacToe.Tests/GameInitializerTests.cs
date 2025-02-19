@@ -13,6 +13,13 @@ namespace TicTacToe.Tests
         private GameInitializer _gameInitializer;
         private Mock<ITickTacToeUI> _mockUI;
 
+        public GameInitializerTests()
+        {
+            _gameInitializer = new GameInitializer();
+            _mockUI = new Mock<ITickTacToeUI>();
+            _mockUI.Setup(ui => ui.GetPlayersName()).Returns("TestPlayer");
+        }
+
         /// <summary>
         /// Initializes test environment before each test.
         /// Sets up the game initializer and mocks the UI with a test player name.

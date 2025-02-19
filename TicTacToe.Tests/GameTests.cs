@@ -35,6 +35,13 @@ namespace TicTacToe.Tests
         [TestInitialize]
         public void Setup()
         {
+            // Reset the board for each test
+            _board = new TickTacToeBoard();
+            
+            // Reset mock states
+            _mockUI.Reset();
+            _mockScore.Reset();
+            
             _board = new TickTacToeBoard();
             _mockUI = new Mock<ITickTacToeUI>();
             _mockScore = new Mock<IScore>();
