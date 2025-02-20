@@ -31,7 +31,7 @@ namespace TicTacToe
     /// Game logic and state management should be handled by separate classes, 
     /// such as <see cref="TickTacToeBoard"/> and Game, to maintain a clear separation of concerns.
     /// </remarks>
-    public class TicTacToeConsoleUI : ITickTacToeUI
+    public class TicTacToeConsoleUI : ITickTacToeConsoleUI
     {
         private readonly IConsole _console;
 

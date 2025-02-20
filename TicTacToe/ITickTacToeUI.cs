@@ -1,7 +1,7 @@
 namespace TicTacToe
 {
     /// <summary>
-    /// Interface for user interface operations.
+    /// Interface for user interface operations common to all platforms.
     /// </summary>
     public interface ITickTacToeUI
     {
@@ -104,22 +104,5 @@ namespace TicTacToe
         /// </summary>
         /// <returns>The selected difficulty level.</returns>
         DifficultyLevel PromptDifficultyLevel();
-
-        /// <summary>
-        /// Sets the background color of the console.
-        /// </summary>
-        /// <param name="color">The color name as a string.</param>
-        void SetBackgroundColor(string color);
-
-        /// <summary>
-        /// Sets the foreground color of the console.
-        /// </summary>
-        /// <param name="color">The color name as a string.</param>
-        void SetForegroundColor(string color);
-
-        /// <summary>
-        /// Resets the console colors to their defaults.
-        /// </summary>
-        void ResetColor();
     }
 }

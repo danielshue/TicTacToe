@@ -50,6 +50,9 @@ namespace TicTacToe
 
         public bool ContinuePlaying {get;set;}
 
+        // Added delegate for waiting for human move without Windows Forms dependency
+        public Action WaitForHumanMove { get; set; } = () => { };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Game"/> class.
         /// </summary>
@@ -90,9 +93,11 @@ namespace TicTacToe
         /// </summary>
         public void StartGame()
         {
+            // Call UpdateDifficultyLevel once at the start
+            UpdateDifficultyLevel();
+
             do
             {
-                UpdateDifficultyLevel();
                 PlayGame();
                 if (!_userInterface.PromptPlayAgain())
                 {
@@ -137,9 +142,15 @@ namespace TicTacToe
             _userInterface.DisplayGameBoard();
 
             if (player == _userInterface.Score?.Player1)
+            {
                 _userInterface.PlayerMove(player);
+                // Wait for the human player's move to complete via delegate
+                WaitForHumanMove();
+            }
             else
+            {
                 _computerPlayer.MakeMove(player.Symbol);
+            }
 
             if (_userInterface.Board.CheckForWin(player.Symbol))
             {
