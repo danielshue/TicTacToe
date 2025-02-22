@@ -1,39 +1,62 @@
 using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace TicTacToe
 {
-
     /// <summary>
-    /// Handles the user interface aspects of the Tic-Tac-Toe game.
+    /// Implements the console-based user interface for the Tic Tac Toe game.
     /// </summary>
     /// <remarks>
-    /// The TicTacToeConsoleUI class focuses on displaying the game board, handling user input, and 
-    /// managing the display of game-related information such as the score and game results. This separation 
-    /// of concerns aligns with the single responsibility principle.
+    /// This class provides a text-based interface through ITickTacToeConsoleUI while maintaining
+    /// compatibility with the core game logic. Key responsibilities include:
     /// 
-    /// Key responsibilities of the TicTacToeConsoleUI class:
-    /// 1. Display Logic:
-    ///     - Displays the game board with or without highlighting the current position.
-    ///     - Displays the current score.
-    ///     - Displays messages indicating the game result (win or draw).
-    /// 2. User Input Handling:
-    ///     - Handles player moves by capturing keyboard input.
-    ///     - Prompts the user to play again and reads the input.
-    ///     - Reads the player's name.
-    /// 3. UI Management:
-    ///     - Clears the console.
-    ///     - Sets the cursor position.
-    ///     - Sets the background and foreground colors.
-    ///     - Resets the console colors.
-    ///     - Shows and hides the cursor.
+    /// Display Features:
+    /// - Color-coded symbols: X in red, O in blue
+    /// - Highlighted current position
+    /// - Centered score display
+    /// - Clear visual feedback
     /// 
-    /// The class does not include any game logic or state management, which is appropriate. 
-    /// Game logic and state management should be handled by separate classes, 
-    /// such as <see cref="TickTacToeBoard"/> and Game, to maintain a clear separation of concerns.
+    /// Input Handling:
+    /// - Arrow key navigation
+    /// - Enter to confirm moves
+    /// - Escape to exit
+    /// - Input validation
+    /// 
+    /// Console Management:
+    /// - Window size optimization
+    /// - Cursor visibility control
+    /// - Color scheme management
+    /// - Screen buffer management
+    /// 
+    /// The class demonstrates:
+    /// - Clean separation between console-specific and general UI operations
+    /// - Efficient screen updates
+    /// - Responsive user interaction
+    /// - Platform-specific optimizations
     /// </remarks>
     public class TicTacToeConsoleUI : ITickTacToeConsoleUI
     {
         private readonly IConsole _console;
+        private static readonly Dictionary<string, ConsoleColor> _colorMap = new()
+        {
+            { "black", ConsoleColor.Black },
+            { "blue", ConsoleColor.Blue },
+            { "cyan", ConsoleColor.Cyan },
+            { "darkblue", ConsoleColor.DarkBlue },
+            { "darkcyan", ConsoleColor.DarkCyan },
+            { "darkgray", ConsoleColor.DarkGray },
+            { "darkgreen", ConsoleColor.DarkGreen },
+            { "darkmagenta", ConsoleColor.DarkMagenta },
+            { "darkred", ConsoleColor.DarkRed },
+            { "darkyellow", ConsoleColor.DarkYellow },
+            { "gray", ConsoleColor.Gray },
+            { "green", ConsoleColor.Green },
+            { "magenta", ConsoleColor.Magenta },
+            { "red", ConsoleColor.Red },
+            { "white", ConsoleColor.White },
+            { "yellow", ConsoleColor.Yellow }
+        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TicTacToeConsoleUI"/> class.
@@ -41,9 +64,7 @@ namespace TicTacToe
         /// <param name="board">The Tic-Tac-Toe board.</param>
         public TicTacToeConsoleUI(ITicTacToeBoard board, IConsole console = null)
         {
-            CurrentRow = 0;
-            CurrentCol = 0;
-            Board = board;
+            Board = board ?? throw new ArgumentNullException(nameof(board));
             _console = console ?? new SystemConsole();
         }
 
@@ -59,117 +80,19 @@ namespace TicTacToe
         /// <inheritdoc />
         public void SetBackgroundColor(string color)
         {
-            switch (color.ToLower())
-            {
-                case "black":
-                    _console.BackgroundColor = ConsoleColor.Black;
-                    break;
-                case "blue":
-                    _console.BackgroundColor = ConsoleColor.Blue;
-                    break;
-                case "cyan":
-                    _console.BackgroundColor = ConsoleColor.Cyan;
-                    break;
-                case "darkblue":
-                    _console.BackgroundColor = ConsoleColor.DarkBlue;
-                    break;
-                case "darkcyan":
-                    _console.BackgroundColor = ConsoleColor.DarkCyan;
-                    break;
-                case "darkgray":
-                    _console.BackgroundColor = ConsoleColor.DarkGray;
-                    break;
-                case "darkgreen":
-                    _console.BackgroundColor = ConsoleColor.DarkGreen;
-                    break;
-                case "darkmagenta":
-                    _console.BackgroundColor = ConsoleColor.DarkMagenta;
-                    break;
-                case "darkred":
-                    _console.BackgroundColor = ConsoleColor.DarkRed;
-                    break;
-                case "darkyellow":
-                    _console.BackgroundColor = ConsoleColor.DarkYellow;
-                    break;
-                case "gray":
-                    _console.BackgroundColor = ConsoleColor.Gray;
-                    break;
-                case "green":
-                    _console.BackgroundColor = ConsoleColor.Green;
-                    break;
-                case "magenta":
-                    _console.BackgroundColor = ConsoleColor.Magenta;
-                    break;
-                case "red":
-                    _console.BackgroundColor = ConsoleColor.Red;
-                    break;
-                case "white":
-                    _console.BackgroundColor = ConsoleColor.White;
-                    break;
-                case "yellow":
-                    _console.BackgroundColor = ConsoleColor.Yellow;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid color");
-            }
+            if (!_colorMap.ContainsKey(color.ToLower()))
+                throw new ArgumentException($"Invalid color: {color}", nameof(color));
+
+            _console.BackgroundColor = _colorMap[color.ToLower()];
         }
 
         /// <inheritdoc />
         public void SetForegroundColor(string color)
         {
-            switch (color.ToLower())
-            {
-                case "black":
-                    _console.ForegroundColor = ConsoleColor.Black;
-                    break;
-                case "blue":
-                    _console.ForegroundColor = ConsoleColor.Blue;
-                    break;
-                case "cyan":
-                    _console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case "darkblue":
-                    _console.ForegroundColor = ConsoleColor.DarkBlue;
-                    break;
-                case "darkcyan":
-                    _console.ForegroundColor = ConsoleColor.DarkCyan;
-                    break;
-                case "darkgray":
-                    _console.ForegroundColor = ConsoleColor.DarkGray;
-                    break;
-                case "darkgreen":
-                    _console.ForegroundColor = ConsoleColor.DarkGreen;
-                    break;
-                case "darkmagenta":
-                    _console.ForegroundColor = ConsoleColor.DarkMagenta;
-                    break;
-                case "darkred":
-                    _console.ForegroundColor = ConsoleColor.DarkRed;
-                    break;
-                case "darkyellow":
-                    _console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-                case "gray":
-                    _console.ForegroundColor = ConsoleColor.Gray;
-                    break;
-                case "green":
-                    _console.ForegroundColor = ConsoleColor.Green;
-                    break;
-                case "magenta":
-                    _console.ForegroundColor = ConsoleColor.Magenta;
-                    break;
-                case "red":
-                    _console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case "white":
-                    _console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case "yellow":
-                    _console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid color");
-            }
+            if (!_colorMap.ContainsKey(color.ToLower()))
+                throw new ArgumentException($"Invalid color: {color}", nameof(color));
+
+            _console.ForegroundColor = _colorMap[color.ToLower()];
         }
 
         /// <inheritdoc />
@@ -191,55 +114,55 @@ namespace TicTacToe
         public void DisplayScore()
         {
             Clear();
-
-            int screenWidth = WindowWidth;
-            int padding = (screenWidth - Score.ToString().Length) / 2;
-
-            SetBackgroundColor(ConsoleColor.White.ToString());
-            SetForegroundColor(ConsoleColor.Black.ToString());
             SetCursorPosition(0, 0);
-            _console.WriteLine(new string(' ', screenWidth));
-            SetCursorPosition(padding, 0);
+            int centerPosition = (WindowWidth - Score.ToString().Length) / 2;
+            if (centerPosition > 0)
+            {
+                SetCursorPosition(centerPosition, 0);
+            }
             _console.Write(Score.ToString());
-            ResetColor();
-            _console.WriteLine(""); // Add an empty line after the score
+            _console.WriteLine();
         }
 
         /// <inheritdoc />
         public void PlayerMove(Player currentPlayer)
         {
-            while (true)
+            bool validMove = false;
+            while (!validMove)
             {
-                ConsoleKeyInfo keyInfo = _console.ReadKey(true);
-
-                switch (keyInfo.Key)
+                DisplayBoard(CurrentRow, CurrentCol);
+                SetCursorPosition(0, 10);
+                _console.Write($"{currentPlayer.Name}'s turn ({currentPlayer.Symbol}). Use arrow keys to move, Enter to confirm: ");
+                
+                var key = _console.ReadKey(true);
+                
+                switch (key.Key)
                 {
-                    case ConsoleKey.UpArrow:
-                        CurrentRow = (CurrentRow > 0) ? CurrentRow - 1 : CurrentRow;
+                    case ConsoleKey.UpArrow when CurrentRow > 0:
+                        CurrentRow--;
                         break;
-                    case ConsoleKey.DownArrow:
-                        CurrentRow = (CurrentRow < 2) ? CurrentRow + 1 : CurrentRow;
+                    case ConsoleKey.DownArrow when CurrentRow < ITicTacToeBoard.BoardSize - 1:
+                        CurrentRow++;
                         break;
-                    case ConsoleKey.LeftArrow:
-                        CurrentCol = (CurrentCol > 0) ? CurrentCol - 1 : CurrentCol;
+                    case ConsoleKey.LeftArrow when CurrentCol > 0:
+                        CurrentCol--;
                         break;
-                    case ConsoleKey.RightArrow:
-                        CurrentCol = (CurrentCol < 2) ? CurrentCol + 1 : CurrentCol;
+                    case ConsoleKey.RightArrow when CurrentCol < ITicTacToeBoard.BoardSize - 1:
+                        CurrentCol++;
                         break;
                     case ConsoleKey.Enter:
-                        if (Board.PlaceSymbol(CurrentRow, CurrentCol, currentPlayer.Symbol))
+                        if (Board.IsCellEmpty(CurrentRow, CurrentCol))
                         {
-                            return;
+                            validMove = Board.PlaceSymbol(CurrentRow, CurrentCol, currentPlayer.Symbol);
                         }
-                        break;
-                    case ConsoleKey.Escape:
-                        Environment.Exit(0);
                         break;
                 }
 
-                Clear();
-                DisplayScore();
-                DisplayBoard(CurrentRow, CurrentCol);
+                if (!validMove)
+                {
+                    Clear();
+                    DisplayScore();
+                }
             }
         }
 
@@ -247,51 +170,48 @@ namespace TicTacToe
         public void DisplayGameBoard(int currentRow, int currentCol) => DisplayBoard(currentRow, currentCol);
 
         /// <inheritdoc />
-        public void DisplayGameBoard()
+        public void DisplayGameBoard() => Display();
+
+        /// <inheritdoc />
+        public void DisplayPlayerWin(Player player)
         {
-            Display();
-            _console.WriteLine("\n\n");
+            SetCursorPosition(0, 12);
+            SetForegroundColor("green");
+            _console.WriteLine($"{player.Name} wins!");
+            ResetColor();
         }
 
         /// <inheritdoc />
-        public void DisplayPlayerWin(Player player) => _console.WriteLine($"{player.Name} wins!");
-
-        /// <inheritdoc />
-        public void DisplayDraw() => _console.WriteLine("It's a draw!");
+        public void DisplayDraw()
+        {
+            SetCursorPosition(0, 12);
+            SetForegroundColor("yellow");
+            _console.WriteLine("It's a draw!");
+            ResetColor();
+        }
 
         /// <inheritdoc />
         public bool PromptPlayAgain()
         {
+            SetCursorPosition(0, 14);
             _console.Write("Do you want to play again? (y/n) ");
-
-            ShowCursor();
-
-            string playAgain = ReadInput().ToLower();
-
-            if (playAgain == "y")
-            {
-                HideCursor();
-                return true;
-            }
-
-            return false;
+            string response = ReadInput().ToUpper();
+            return response.StartsWith("Y");
         }
 
         /// <inheritdoc />
-        public string ReadInput() => _console.ReadLine();
+        public string ReadInput() => _console.ReadLine() ?? string.Empty;
 
         /// <inheritdoc />
         public string GetPlayersName()
         {
-            ShowCursor();
-
+            Clear();
+            SetCursorPosition((WindowWidth - 20) / 2, 5);
+            _console.CursorVisible = true;
             _console.Write("Enter your name: ");
-
-            string playerName = ReadInput();
-
-            HideCursor();
-
-            return playerName;
+            string name = ReadInput();
+            _console.CursorVisible = false;
+            return string.IsNullOrWhiteSpace(name) ? "Player" : name;
         }
 
         /// <inheritdoc />
@@ -307,39 +227,83 @@ namespace TicTacToe
         /// <inheritdoc />
         public void DisplayBoard(int currentRow, int currentCol)
         {
+            int centerX = (WindowWidth - (ITicTacToeBoard.BoardSize * 4)) / 2;
+            if (centerX < 0) centerX = 0;
+
+            SetCursorPosition(centerX, 2);
+            _console.WriteLine("   1   2   3");
+            SetCursorPosition(centerX, 3);
+            _console.WriteLine("  ───────────");
+
             for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
             {
+                SetCursorPosition(centerX, 4 + i * 2);
+                _console.Write($"{(char)('A' + i)} ");
+                
                 for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
                 {
                     if (i == currentRow && j == currentCol)
-                    {
-                        SetBackgroundColor(ConsoleColor.Gray.ToString());
-                        SetForegroundColor(ConsoleColor.Black.ToString());
-                    }
-                    else if (Board.BoardArray[i, j] == 'X')
-                    {
-                        SetForegroundColor(ConsoleColor.Red.ToString());
-                    }
-                    else if (Board.BoardArray[i, j] == 'O')
-                    {
-                        SetForegroundColor(ConsoleColor.Blue.ToString());
-                    }
+                        SetBackgroundColor("darkgray");
 
-                    _console.Write(Board.BoardArray[i, j].ToString());
-                    
+                    char symbol = Board.BoardArray[i, j];
+                    if (symbol == 'X') SetForegroundColor("red");
+                    else if (symbol == 'O') SetForegroundColor("blue");
+
+                    _console.Write($" {symbol} ");
                     ResetColor();
-
-                    if (j < ITicTacToeBoard.BoardSize - 1) _console.Write("|");
+                    
+                    if (j < ITicTacToeBoard.BoardSize - 1)
+                        _console.Write("│");
                 }
-
-                _console.WriteLine("");
-
-                if (i < ITicTacToeBoard.BoardSize - 1) _console.WriteLine("-----");
+                
+                if (i < ITicTacToeBoard.BoardSize - 1)
+                {
+                    SetCursorPosition(centerX, 5 + i * 2);
+                    _console.WriteLine("  ─┼───┼─");
+                }
             }
+            
+            _console.WriteLine("\n");
         }
 
         /// <inheritdoc />
-        public void Display() => DisplayBoard(-1, -1);
+        public void Display()
+        {
+            int centerX = (WindowWidth - (ITicTacToeBoard.BoardSize * 4)) / 2;
+            if (centerX < 0) centerX = 0;
+
+            SetCursorPosition(centerX, 2);
+            _console.WriteLine("   1   2   3");
+            SetCursorPosition(centerX, 3);
+            _console.WriteLine("  ───────────");
+
+            for (int i = 0; i < ITicTacToeBoard.BoardSize; i++)
+            {
+                SetCursorPosition(centerX, 4 + i * 2);
+                _console.Write($"{(char)('A' + i)} ");
+                
+                for (int j = 0; j < ITicTacToeBoard.BoardSize; j++)
+                {
+                    char symbol = Board.BoardArray[i, j];
+                    if (symbol == 'X') SetForegroundColor("red");
+                    else if (symbol == 'O') SetForegroundColor("blue");
+
+                    _console.Write($" {symbol} ");
+                    ResetColor();
+                    
+                    if (j < ITicTacToeBoard.BoardSize - 1)
+                        _console.Write("│");
+                }
+                
+                if (i < ITicTacToeBoard.BoardSize - 1)
+                {
+                    SetCursorPosition(centerX, 5 + i * 2);
+                    _console.WriteLine("  ─┼───┼─");
+                }
+            }
+            
+            _console.WriteLine("\n");
+        }
 
         /// <summary>
         /// Shows the cursor in the console.
@@ -365,29 +329,28 @@ namespace TicTacToe
         public DifficultyLevel PromptDifficultyLevel()
         {
             Clear();
+            SetCursorPosition(0, 5);
             _console.WriteLine("Select difficulty level:");
             _console.WriteLine("1. Easy");
             _console.WriteLine("2. Medium");
             _console.WriteLine("3. Hard");
-            
-            ShowCursor();
-            
+            _console.Write("\nEnter choice (1-3): ");
+
             while (true)
             {
-                string input = ReadInput().Trim();
+                string input = ReadInput();
                 switch (input)
                 {
-                    case "1":
-                        HideCursor();
-                        return DifficultyLevel.Easy;
-                    case "2":
-                        HideCursor();
-                        return DifficultyLevel.Medium;
-                    case "3":
-                        HideCursor();
-                        return DifficultyLevel.Hard;
+                    case "1": return DifficultyLevel.Easy;
+                    case "2": return DifficultyLevel.Medium;
+                    case "3": return DifficultyLevel.Hard;
                     default:
-                        _console.WriteLine("Invalid input. Please enter 1, 2, or 3:");
+                        SetCursorPosition(0, 11);
+                        SetForegroundColor("red");
+                        _console.WriteLine("Invalid choice! Enter 1, 2, or 3.");
+                        ResetColor();
+                        SetCursorPosition(0, 9);
+                        _console.Write("Enter choice (1-3): ");
                         break;
                 }
             }

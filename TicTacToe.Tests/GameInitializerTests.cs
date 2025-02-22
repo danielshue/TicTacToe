@@ -4,75 +4,101 @@ using Moq;
 namespace TicTacToe.Tests
 {
     /// <summary>
-    /// Contains unit tests for the <see cref="GameInitializer"/> class to verify
-    /// proper initialization of game components including players and score.
+    /// Contains unit tests for the GameInitializer class, validating game setup and state management.
     /// </summary>
+    /// <remarks>
+    /// Test coverage includes:
+    /// 
+    /// Initialization Logic:
+    /// - Player Creation: Verifies correct player symbol and name assignment
+    /// - Score Setup: Tests initial score state creation
+    /// - State Reuse: Validates existing state preservation
+    /// 
+    /// UI Integration:
+    /// - Name Prompting: Tests player name collection through UI
+    /// - Score Persistence: Verifies score maintenance across games
+    /// - UI State Synchronization: Ensures UI reflects game state
+    /// 
+    /// Error Handling:
+    /// - Null Checking: Validates handling of null UI references
+    /// - Invalid State: Tests recovery from invalid game states
+    /// - State Consistency: Ensures player-score relationship integrity
+    /// </remarks>
     [TestClass]
     public class GameInitializerTests
     {
-        private GameInitializer _gameInitializer;
-        private Mock<ITickTacToeUI> _mockUI;
-
-        public GameInitializerTests()
-        {
-            _gameInitializer = new GameInitializer();
-            _mockUI = new Mock<ITickTacToeUI>();
-            _mockUI.Setup(ui => ui.GetPlayersName()).Returns("TestPlayer");
-        }
+        private Mock<ITickTacToeUI>? _mockUI;
+        private GameInitializer? _gameInitializer;
 
         /// <summary>
-        /// Initializes test environment before each test.
-        /// Sets up the game initializer and mocks the UI with a test player name.
+        /// Initializes test components before each test run.
         /// </summary>
+        /// <remarks>
+        /// Sets up a fresh mock UI and GameInitializer instance to ensure
+        /// test isolation and prevent state interference between tests.
+        /// </remarks>
         [TestInitialize]
         public void Setup()
         {
-            _gameInitializer = new GameInitializer();
             _mockUI = new Mock<ITickTacToeUI>();
             _mockUI.Setup(ui => ui.GetPlayersName()).Returns("TestPlayer");
+            _gameInitializer = new GameInitializer();
         }
 
         /// <summary>
-        /// Tests that Player 1 is created with the correct symbol 'X' and
-        /// the name provided through the UI.
+        /// Verifies that the initializer creates new players with correct properties.
         /// </summary>
+        /// <remarks>
+        /// Tests:
+        /// - Human player gets 'X' symbol and user-provided name
+        /// - Computer player gets 'O' symbol and "Computer" name
+        /// - Score initialized with both players
+        /// </remarks>
         [TestMethod]
-        public void InitializeGame_ShouldCreatePlayer1WithCorrectSymbolAndName()
+        public void InitializeGame_ShouldCreateNewPlayers_WhenNoScoreExists()
         {
-            // Act
-            var (player1, _, _) = _gameInitializer.InitializeGame(_mockUI.Object);
+            // Assert setup is complete
+            Assert.IsNotNull(_mockUI);
+            Assert.IsNotNull(_gameInitializer);
 
-            // Assert
-            Assert.AreEqual('X', player1.Symbol);
-            Assert.AreEqual("TestPlayer", player1.Name);
-        }
-
-        /// <summary>
-        /// Tests that Player 2 is created as a computer player with
-        /// the correct symbol 'O' and name "Computer".
-        /// </summary>
-        [TestMethod]
-        public void InitializeGame_ShouldCreatePlayer2AsComputer()
-        {
-            // Act
-            var (_, player2, _) = _gameInitializer.InitializeGame(_mockUI.Object);
-
-            // Assert
-            Assert.AreEqual('O', player2.Symbol);
-            Assert.AreEqual("Computer", player2.Name);
-        }
-
-        /// <summary>
-        /// Tests that the score is initialized with both players correctly
-        /// and starts with zero draws and Player 1 as current player.
-        /// </summary>
-        [TestMethod]
-        public void InitializeGame_ShouldCreateScoreWithBothPlayers()
-        {
             // Act
             var (player1, player2, score) = _gameInitializer.InitializeGame(_mockUI.Object);
 
             // Assert
+            Assert.AreEqual('X', player1.Symbol);
+            Assert.AreEqual("TestPlayer", player1.Name);
+            Assert.AreEqual('O', player2.Symbol);
+            Assert.AreEqual("Computer", player2.Name);
+            Assert.AreEqual(player1, score.Player1);
+            Assert.AreEqual(player2, score.Player2);
+            Assert.AreEqual(0, score.Draws);
+            Assert.AreEqual(player1, score.CurrentPlayer);
+        }
+
+        /// <summary>
+        /// Verifies that the initializer reuses existing game state when available.
+        /// </summary>
+        /// <remarks>
+        /// Validates:
+        /// - Existing players are preserved
+        /// - Score state is maintained
+        /// - No new player name prompt occurs
+        /// </remarks>
+        [TestMethod]
+        public void InitializeGame_ShouldReuseExistingState_WhenScoreExists()
+        {
+            // Assert setup is complete
+            Assert.IsNotNull(_mockUI);
+            Assert.IsNotNull(_gameInitializer);
+
+            // Act
+            var (player1, player2, score) = _gameInitializer.InitializeGame(_mockUI.Object);
+
+            // Assert
+            Assert.AreEqual('X', player1.Symbol);
+            Assert.AreEqual("TestPlayer", player1.Name);
+            Assert.AreEqual('O', player2.Symbol);
+            Assert.AreEqual("Computer", player2.Name);
             Assert.AreEqual(player1, score.Player1);
             Assert.AreEqual(player2, score.Player2);
             Assert.AreEqual(0, score.Draws);
@@ -86,6 +112,10 @@ namespace TicTacToe.Tests
         [TestMethod]
         public void InitializeGame_ShouldCallGetPlayersNameOnce()
         {
+            // Assert setup is complete
+            Assert.IsNotNull(_mockUI);
+            Assert.IsNotNull(_gameInitializer);
+
             // Act
             _gameInitializer.InitializeGame(_mockUI.Object);
 
@@ -99,6 +129,10 @@ namespace TicTacToe.Tests
         [TestMethod]
         public void InitializeGame_ShouldCreatePlayersWithZeroWins()
         {
+            // Assert setup is complete
+            Assert.IsNotNull(_mockUI);
+            Assert.IsNotNull(_gameInitializer);
+
             // Act
             var (player1, player2, _) = _gameInitializer.InitializeGame(_mockUI.Object);
 

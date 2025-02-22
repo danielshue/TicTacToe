@@ -1,12 +1,51 @@
 ﻿namespace TicTacToe.Tests
 {
     /// <summary>
-    /// Contains unit tests for the <see cref="TickTacToeBoard"/> class to verify
-    /// board state management, move validation, and win condition detection.
+    /// Contains unit tests for the TickTacToeBoard class, validating board state and game mechanics.
     /// </summary>
+    /// <remarks>
+    /// Test coverage includes:
+    /// 
+    /// Board Operations:
+    /// - Symbol Placement: Tests valid and invalid move handling
+    /// - Cell State: Validates empty and occupied cell detection
+    /// - Board Cloning: Tests deep copy functionality
+    /// - Board Reset: Verifies clear board operations
+    /// 
+    /// Win Detection:
+    /// - Horizontal Wins: Tests row completion scenarios
+    /// - Vertical Wins: Validates column victories
+    /// - Diagonal Wins: Checks diagonal win patterns
+    /// - False Positives: Verifies no incorrect win detection
+    /// 
+    /// Game State:
+    /// - Full Board: Tests board full condition
+    /// - Move Validation: Verifies legal move constraints
+    /// - State Integrity: Ensures consistent board state
+    /// - Move History: Validates move sequence tracking
+    /// 
+    /// Platform Independence:
+    /// - UI Agnostic: Verifies board works without UI dependencies
+    /// - State Representation: Tests board visualization
+    /// </remarks>
     [TestClass]
-    public sealed class TickTacToeBoardTests
+    public class TickTacToeBoardTests
     {
+        private TickTacToeBoard? _board;
+
+        /// <summary>
+        /// Initializes test environment before each test.
+        /// </summary>
+        /// <remarks>
+        /// Creates a fresh board instance to ensure test isolation
+        /// and prevent state bleeding between tests.
+        /// </remarks>
+        [TestInitialize]
+        public void Setup()
+        {
+            _board = new TickTacToeBoard();
+        }
+
         /// <summary>
         /// Tests that a new board is initialized with all cells empty.
         /// </summary>

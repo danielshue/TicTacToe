@@ -1,22 +1,47 @@
 namespace TicTacToe.Tests
 {
     /// <summary>
-    /// Contains unit tests for the <see cref="ComputerPlayer"/> class.
+    /// Contains unit tests for the ComputerPlayer class, validating AI behavior across difficulty levels.
     /// </summary>
+    /// <remarks>
+    /// Tests cover the following aspects:
+    /// 
+    /// AI Strategy Testing:
+    /// - Easy Mode: Verifies random move generation and occasional mistakes
+    /// - Medium Mode: Tests blocking and winning move recognition
+    /// - Hard Mode: Validates optimal move selection
+    /// 
+    /// Board Interaction:
+    /// - Move Validation: Tests legal move enforcement
+    /// - Board State Management: Verifies correct board state after moves
+    /// - Clone Usage: Ensures proper board cloning for move simulation
+    /// 
+    /// Platform Independence:
+    /// - UI Agnostic: Verifies AI works without UI dependencies
+    /// - Consistent Behavior: Tests reproducible outcomes in same board states
+    /// - State Preservation: Validates original board integrity during simulations
+    /// </remarks>
     [TestClass]
     public class ComputerPlayerTests
     {
         private TickTacToeBoard _board = new();
         private ComputerPlayer _computerPlayer = null!;
 
+        /// <summary>
+        /// Initializes a new instance of ComputerPlayerTests.
+        /// </summary>
         public ComputerPlayerTests()
         {
             _computerPlayer = new ComputerPlayer(_board);
         }
 
         /// <summary>
-        /// Initializes the test board and computer player before each test.
+        /// Sets up test environment before each test.
         /// </summary>
+        /// <remarks>
+        /// Initializes a fresh board and computer player instance to ensure
+        /// test isolation and prevent state bleeding between tests.
+        /// </remarks>
         [TestInitialize]
         public void Setup()
         {

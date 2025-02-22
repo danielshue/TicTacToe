@@ -5,6 +5,28 @@ using System.Threading;
 
 namespace TicTacToe.WinForms
 {
+    /// <summary>
+    /// Provides a Windows Forms-based user interface for the Tic Tac Toe game.
+    /// </summary>
+    /// <remarks>
+    /// This form implements ITickTacToeUI to provide a graphical interface while maintaining
+    /// compatibility with the core game logic. Key features include:
+    /// 
+    /// UI Components:
+    /// - Dynamic Button Grid: 3x3 grid of buttons for game moves
+    /// - Visual Feedback: Color coding for X's and O's
+    /// - Modal Dialogs: Clean interface for player input and game options
+    /// 
+    /// Threading Model:
+    /// - Uses AutoResetEvent for move synchronization
+    /// - Properly handles cross-thread UI updates
+    /// - Maintains UI responsiveness during game play
+    /// 
+    /// Design Patterns:
+    /// - Event-Based Input: Responds to button clicks for moves
+    /// - Thread-Safe Updates: Uses Invoke for cross-thread operations
+    /// - Modal Dialog Management: Proper dialog lifecycle handling
+    /// </remarks>
     public partial class Form1 : Form, ITickTacToeUI
     {
         private readonly Button[,] _buttons;

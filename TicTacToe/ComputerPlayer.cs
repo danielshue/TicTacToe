@@ -4,8 +4,27 @@ using System.Linq;
 namespace TicTacToe
 {
     /// <summary>
-    /// Represents a computer player in the Tic-Tac-Toe game.
+    /// Implements the computer player's AI logic for making moves in Tic Tac Toe.
     /// </summary>
+    /// <remarks>
+    /// The ComputerPlayer class provides AI functionality across different difficulty levels:
+    /// 
+    /// Difficulty Levels:
+    /// - Easy: Makes random moves, occasionally missing winning opportunities
+    /// - Medium: Blocks opponent wins and takes obvious winning moves
+    /// - Hard: Uses optimal strategy with minimax algorithm
+    /// 
+    /// Features:
+    /// - UI Independent: Works with any interface implementation
+    /// - Consistent Behavior: Maintains strategy across game sessions
+    /// - Adjustable Difficulty: Can be changed between games
+    /// - State Management: Uses board cloning for move simulation
+    /// 
+    /// Design Considerations:
+    /// - Encapsulated Logic: AI decisions are self-contained
+    /// - Deterministic Outcomes: Same board state produces consistent moves at Hard difficulty
+    /// - Performance Optimized: Uses efficient move calculation algorithms
+    /// </remarks>
     public class ComputerPlayer
     {
         private readonly ITicTacToeBoard _board;
@@ -17,17 +36,22 @@ namespace TicTacToe
         /// <param name="difficultyLevel">The difficulty level of the computer player.</param>
         public ComputerPlayer(ITicTacToeBoard board, DifficultyLevel difficultyLevel = DifficultyLevel.Hard)
         {
-            _board = board;
+            _board = board ?? throw new ArgumentNullException(nameof(board));
             DifficultyLevel = difficultyLevel;
         }
 
         public DifficultyLevel DifficultyLevel { get; set; }
 
         /// <summary>
-        /// Makes a move for the computer player.
+        /// Executes a move for the computer player based on the current difficulty level.
         /// </summary>
-        /// <param name="playerSymbol">The symbol representing the computer player.</param>
-        /// <returns>True if the move was made successfully, false otherwise.</returns>
+        /// <param name="symbol">The symbol ('X' or 'O') to place on the board.</param>
+        /// <remarks>
+        /// Move selection varies by difficulty:
+        /// - Easy: Random moves with occasional mistakes
+        /// - Medium: Strategic moves with focus on immediate wins/blocks
+        /// - Hard: Optimal moves using minimax algorithm
+        /// </remarks>
         public bool MakeMove(char playerSymbol) => TryMakeMove(_board.Clone(), playerSymbol);
 
         /// <summary>
@@ -38,11 +62,15 @@ namespace TicTacToe
         /// <returns>True if the move was made successfully, false otherwise.</returns>
         private bool TryMakeMove(ITicTacToeBoard clonedBoard, char playerSymbol)
         {
+            if (clonedBoard.IsBoardFull()) return false;
+
             char opponentSymbol = playerSymbol == 'X' ? 'O' : 'X';
 
             // Easy difficulty - just make random moves
             if (DifficultyLevel == DifficultyLevel.Easy)
+            {
                 return TryRandomMove(clonedBoard, playerSymbol);
+            }
 
             // Medium difficulty - purely reactive strategy
             if (DifficultyLevel == DifficultyLevel.Medium)

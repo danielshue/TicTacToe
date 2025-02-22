@@ -4,9 +4,32 @@ using Moq;
 namespace TicTacToe.Tests
 {
     /// <summary>
-    /// Contains unit tests for the <see cref="Game"/> class to verify game initialization
-    /// and behavior across different difficulty levels.
+    /// Contains unit tests for the Game class, validating core game mechanics and UI interactions.
     /// </summary>
+    /// <remarks>
+    /// Test coverage includes:
+    /// 
+    /// Game Mechanics:
+    /// - Player turn management
+    /// - Win/draw detection
+    /// - Score tracking
+    /// - Game state persistence
+    /// 
+    /// UI Integration:
+    /// - Proper UI abstraction usage
+    /// - Human move coordination
+    /// - Display update verification
+    /// 
+    /// AI Behavior:
+    /// - Difficulty level implementation
+    /// - Move selection accuracy
+    /// - Computer player strategies
+    /// 
+    /// Platform Independence:
+    /// - UI-agnostic operation
+    /// - Event coordination
+    /// - State management
+    /// </remarks>
     [TestClass]
     public class GameTests
     {
@@ -168,6 +191,12 @@ namespace TicTacToe.Tests
         /// <summary>
         /// Tests that the game properly updates difficulty level when requested.
         /// </summary>
+        /// <remarks>
+        /// Verifies that:
+        /// - Difficulty selection is prompted exactly once at game start
+        /// - Selected difficulty is applied to the computer player
+        /// - UI implementation receives the difficulty update request
+        /// </remarks>
         [TestMethod]
         public void Game_ShouldUpdateDifficultyLevel_WhenPrompted()
         {
@@ -222,8 +251,15 @@ namespace TicTacToe.Tests
         }
 
         /// <summary>
-        /// Tests that the game properly alternates between players.
+        /// Tests that the game properly alternates between players during gameplay.
         /// </summary>
+        /// <remarks>
+        /// Validates that:
+        /// - Players take turns in correct order
+        /// - WaitForHumanMove delegate is called for human moves
+        /// - Computer moves are executed with proper timing
+        /// - Score tracking correctly switches current player
+        /// </remarks>
         [TestMethod]
         public void Game_ShouldAlternatePlayers_BetweenTurns()
         {
@@ -270,6 +306,13 @@ namespace TicTacToe.Tests
         /// <summary>
         /// Tests that the game maintains proper game state between rounds.
         /// </summary>
+        /// <remarks>
+        /// Ensures:
+        /// - Board is cleared between games
+        /// - Player order is reset correctly
+        /// - Score persists across games
+        /// - UI state is properly synchronized
+        /// </remarks>
         [TestMethod]
         public void Game_ShouldMaintainGameState_BetweenRounds()
         {

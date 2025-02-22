@@ -1,8 +1,38 @@
 namespace TicTacToe
 {
     /// <summary>
-    /// Interface for user interface operations common to all platforms.
+    /// Defines the core user interface contract for the Tic Tac Toe game across different platforms.
     /// </summary>
+    /// <remarks>
+    /// This interface serves as the primary abstraction layer between the game logic and UI implementations.
+    /// It enables the Game class to remain platform-agnostic while supporting both console and graphical interfaces.
+    /// 
+    /// Key responsibilities are organized into categories:
+    /// 1. State Management:
+    ///    - Track current board position (CurrentRow, CurrentCol)
+    ///    - Maintain game score
+    ///    - Handle game board state
+    /// 
+    /// 2. Display Operations:
+    ///    - Show game board and current state
+    ///    - Display scores and game results
+    ///    - Present game messages
+    /// 
+    /// 3. Player Interaction:
+    ///    - Handle player moves
+    ///    - Collect player information
+    ///    - Process game continuation decisions
+    /// 
+    /// 4. Game Configuration:
+    ///    - Set difficulty levels
+    ///    - Initialize game parameters
+    /// 
+    /// The interface is designed to be:
+    /// - Platform Independent: No assumptions about the UI technology
+    /// - Complete: Contains all necessary methods for game operation
+    /// - Cohesive: Methods relate to UI operations only
+    /// - Minimal: No unnecessary methods that might not apply to all platforms
+    /// </remarks>
     public interface ITickTacToeUI
     {
         /// <summary>

@@ -3,35 +3,22 @@ using System;
 namespace TicTacToe
 {
     /// <summary>
-    /// Manages the Tic Tac Toe game, including game initialization, player turns, and game end conditions.
+    /// Manages the Tic Tac Toe game lifecycle and core game mechanics.
     /// </summary>
     /// <remarks>
-    /// The Game class appears to have a proper level of abstraction for managing the overall flow and logic 
-    /// of the Tic-Tac-Toe game. It focuses on game initialization, player turns, and game end conditions, 
-    /// while delegating display and user input responsibilities to the ITickTacToeUI interface. This separation 
-    /// of concerns aligns with the single responsibility principle.
+    /// The Game class provides a UI-agnostic implementation that can work with both console and Windows Forms interfaces
+    /// through the ITickTacToeUI abstraction. Key features include:
     /// 
-    /// Here are the key responsibilities of the Game class:
+    /// - Platform Independence: Uses a delegate-based approach (WaitForHumanMove) to coordinate with different UI implementations
+    /// - Game State Management: Handles player turns, board state, and game progression
+    /// - Difficulty Levels: Supports multiple AI difficulty settings that can be changed between games
+    /// - Score Tracking: Maintains game statistics through the IScoreManager interface
     /// 
-    /// 1. Game Initialization:
-    ///     - Initializes players and the game board.
-    ///     - Sets up the game loop and handles game restarts.
-    /// 2. Game Loop Management:
-    ///     - Manages the main game loop, alternating turns between players.
-    ///     - Calls methods to handle player moves and checks for game end conditions.
-    /// 3. Player Moves:
-    ///     - Handles player moves and checks for win or draw conditions.
-    ///     - Switches the current player after each move.
-    /// 4. Computer Moves:
-    ///     - Simulates computer moves by cloning the board and trying to make a winning move or a random move.
-    /// 
-    /// The class does not include any display or user interface logic, which is appropriate.
-    /// Display logic and user input handling are delegated to the ITickTacToeUI interface, maintaining a clear 
-    /// separation of concerns.
-    /// 
-    /// Overall, the Game class has a proper level of abstraction for managing the overall flow and logic 
-    /// of the Tic-Tac-Toe game. It encapsulates the game initialization, player turns, and game end conditions, 
-    /// and does not include any unrelated responsibilities.
+    /// The class follows SOLID principles:
+    /// - Single Responsibility: Focuses solely on game flow and rules
+    /// - Open/Closed: Extends behavior through interface implementations
+    /// - Interface Segregation: Uses specific interfaces for UI, scoring, and game initialization
+    /// - Dependency Inversion: Depends on abstractions rather than concrete implementations
     /// </remarks>
     /// <seealso cref="ComputerPlayer"/>
     /// <seealso cref="GameInitializer"/>
@@ -48,17 +35,25 @@ namespace TicTacToe
         private readonly IScoreManager _scoreManager;
         private DifficultyLevel _difficultyLevel;
 
-        public bool ContinuePlaying {get;set;}
+        /// <summary>
+        /// Gets or sets whether the game should continue running.
+        /// </summary>
+        public bool ContinuePlaying { get; set; }
 
-        // Added delegate for waiting for human move without Windows Forms dependency
+        /// <summary>
+        /// Delegate to coordinate with the UI implementation for waiting on human player moves.
+        /// This enables UI-agnostic implementation of turn management.
+        /// </summary>
         public Action WaitForHumanMove { get; set; } = () => { };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Game"/> class.
+        /// Initializes a new instance of the Game class with the specified UI implementation and settings.
         /// </summary>
-        /// <param name="userInterface">The user interface for the game.</param>
-        /// <param name="difficultyLevel">The initial difficulty level for the game.</param>
-        /// <param name="gameInitializer">The game initializer service.</param>
+        /// <param name="userInterface">The UI implementation (Windows Forms or Console) handling user interaction.</param>
+        /// <param name="difficultyLevel">Initial AI difficulty setting. Defaults to Hard if not specified.</param>
+        /// <param name="gameInitializer">Optional custom game initializer. A default one is created if not provided.</param>
+        /// <exception cref="ArgumentNullException">Thrown when userInterface is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when score initialization fails.</exception>
         public Game(ITickTacToeUI userInterface, DifficultyLevel difficultyLevel = DifficultyLevel.Hard, IGameInitializer gameInitializer = null)
         {
             ContinuePlaying = true;
@@ -80,8 +75,12 @@ namespace TicTacToe
         }
 
         /// <summary>
-        /// Prompts the user to select a difficulty level and updates the computer player.
+        /// Updates the game's difficulty level based on user selection and reinitializes the computer player.
         /// </summary>
+        /// <remarks>
+        /// This method delegates the difficulty selection to the UI implementation and updates the
+        /// computer player's behavior accordingly. It's called once at the start of each game session.
+        /// </remarks>
         private void UpdateDifficultyLevel()
         {
             _difficultyLevel = _userInterface.PromptDifficultyLevel();
@@ -89,8 +88,15 @@ namespace TicTacToe
         }
 
         /// <summary>
-        /// Starts the game loop, allowing the game to be played and restarted.
+        /// Initiates the main game loop and handles game progression.
         /// </summary>
+        /// <remarks>
+        /// This method:
+        /// - Prompts for initial difficulty setting
+        /// - Manages the game loop until player quits
+        /// - Handles game restarts and board resets
+        /// - Maintains player turn order across games
+        /// </remarks>
         public void StartGame()
         {
             // Call UpdateDifficultyLevel once at the start
@@ -115,8 +121,13 @@ namespace TicTacToe
         }
 
         /// <summary>
-        /// Manages the main game loop, alternating turns between players.
+        /// Controls the progression of a single game until completion.
         /// </summary>
+        /// <remarks>
+        /// Manages turn alternation between human and computer players until a win or draw occurs.
+        /// Uses the WaitForHumanMove delegate to synchronize with the UI during human player turns.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Thrown when game state is not properly initialized.</exception>
         private void PlayGame()
         {
             if (_userInterface.Score?.CurrentPlayer == null)
@@ -129,10 +140,23 @@ namespace TicTacToe
         }
 
         /// <summary>
-        /// Handles a player's move and checks for win or draw conditions.
+        /// Executes a single player's turn and evaluates the game state afterwards.
         /// </summary>
-        /// <param name="player">The player making the move.</param>
-        /// <returns>True if the game has ended, false otherwise.</returns>
+        /// <param name="player">The player whose turn is being processed.</param>
+        /// <returns>True if the game has ended (win or draw), false if the game should continue.</returns>
+        /// <remarks>
+        /// For human players, this method:
+        /// - Updates the display
+        /// - Waits for move completion via WaitForHumanMove delegate
+        /// - Validates the move result
+        /// 
+        /// For computer players:
+        /// - Executes the AI move based on current difficulty
+        /// - Updates the game state
+        /// 
+        /// In both cases, checks for win/draw conditions and updates the score accordingly.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown when player is null.</exception>
         private bool PerformMove(Player player)
         {
             if (player == null)
