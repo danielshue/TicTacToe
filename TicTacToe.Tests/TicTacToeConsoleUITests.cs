@@ -57,12 +57,27 @@ namespace TicTacToe.Tests
             _mockBoard.Setup(b => b.BoardArray).Returns(_boardArray);
             
             _mockConsole = new Mock<IConsole>();
+            // Setup both ReadKey overloads to ensure consistent behavior
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>()))
+                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
+                
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
+
             _mockScore = new Mock<IScore>();
             _mockScore.Setup(s => s.ToString()).Returns("Score: 0-0");
             _consoleUI = new TicTacToeConsoleUI(_mockBoard.Object, _mockConsole.Object)
             {
                 Score = _mockScore.Object
             };
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _mockConsole.Reset();
+            _mockBoard.Reset();
+            _mockScore.Reset();
         }
 
         /// <summary>
@@ -215,15 +230,17 @@ namespace TicTacToe.Tests
 
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_UpArrow_DecreasesRowIfPossible()
         {
             // Arrange
             _consoleUI.CurrentRow = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(true))
+            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
             _mockBoard.Setup(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X')).Returns(true);
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 
             // Act
             _consoleUI.PlayerMove(player);
@@ -233,15 +250,17 @@ namespace TicTacToe.Tests
         }
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_UpArrow_StaysAtZeroWhenAtTopEdge()
         {
             // Arrange
             _consoleUI.CurrentRow = 0;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(true))
+            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
             _mockBoard.Setup(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X')).Returns(true);
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 
             // Act
             _consoleUI.PlayerMove(player);
@@ -251,15 +270,17 @@ namespace TicTacToe.Tests
         }
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_DownArrow_IncreasesRowIfPossible()
         {
             // Arrange
             _consoleUI.CurrentRow = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(true))
+            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
             _mockBoard.Setup(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X')).Returns(true);
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 
             // Act
             _consoleUI.PlayerMove(player);
@@ -269,15 +290,17 @@ namespace TicTacToe.Tests
         }
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_LeftArrow_DecreasesColumnIfPossible()
         {
             // Arrange
             _consoleUI.CurrentCol = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(true))
+            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
             _mockBoard.Setup(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X')).Returns(true);
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 
             // Act
             _consoleUI.PlayerMove(player);
@@ -287,15 +310,17 @@ namespace TicTacToe.Tests
         }
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_RightArrow_IncreasesColumnIfPossible()
         {
             // Arrange
             _consoleUI.CurrentCol = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(true))
+            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
             _mockBoard.Setup(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X')).Returns(true);
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 
             // Act
             _consoleUI.PlayerMove(player);
@@ -305,15 +330,17 @@ namespace TicTacToe.Tests
         }
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_Enter_PlacesSymbolAtCurrentPosition()
         {
             // Arrange
             _consoleUI.CurrentRow = 1;
             _consoleUI.CurrentCol = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.Setup(c => c.ReadKey(true))
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
             _mockBoard.Setup(b => b.PlaceSymbol(1, 1, 'X')).Returns(true);
+            _mockBoard.Setup(b => b.IsCellEmpty(1, 1)).Returns(true);
 
             // Act
             _consoleUI.PlayerMove(player);
@@ -323,13 +350,14 @@ namespace TicTacToe.Tests
         }
 
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void PlayerMove_Enter_ContinuesIfPlacementFails()
         {
             // Arrange
             _consoleUI.CurrentRow = 1;
             _consoleUI.CurrentCol = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(true))
+            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
@@ -338,12 +366,64 @@ namespace TicTacToe.Tests
                 .Returns(false)  // First attempt fails
                 .Returns(true); // Second attempt succeeds
 
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+
             // Act
             _consoleUI.PlayerMove(player);
 
             // Assert
             _mockBoard.Verify(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X'), Times.Exactly(2));
             Assert.AreEqual(2, _consoleUI.CurrentCol); // Moved right after failed attempt
+        }
+
+        [TestMethod]
+        [Timeout(2000)]
+        public void PlayerMove_Timeout_AutoPlacesInFirstAvailableSpot()
+        {
+            // Arrange
+            _consoleUI.CurrentRow = 1;
+            _consoleUI.CurrentCol = 1;
+            var player = new Player('X', "TestPlayer");
+            
+            // Setup mock to simulate timeout by delaying
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .Callback(() => Thread.Sleep(1000)) // Force timeout
+                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false));
+
+            _mockBoard.Setup(b => b.IsCellEmpty(0, 0)).Returns(true);
+            _mockBoard.Setup(b => b.PlaceSymbol(0, 0, 'X')).Returns(true);
+
+            // Act
+            _consoleUI.PlayerMove(player);
+
+            // Assert
+            _mockBoard.Verify(b => b.PlaceSymbol(0, 0, 'X'), Times.Once);
+            Assert.AreEqual(0, _consoleUI.CurrentRow);
+            Assert.AreEqual(0, _consoleUI.CurrentCol);
+        }
+
+        [TestMethod]
+        [Timeout(2000)]
+        public void PlayerMove_TimeoutAndAllCellsOccupied_HandlesFailureGracefully()
+        {
+            // Arrange
+            _consoleUI.CurrentRow = 1;
+            _consoleUI.CurrentCol = 1;
+            var player = new Player('X', "TestPlayer");
+            
+            // Setup mock to simulate timeout
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .Callback(() => Thread.Sleep(1000))
+                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false));
+
+            // All cells occupied
+            _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(false);
+            
+            // Should not throw exception
+            _consoleUI.PlayerMove(player);
+            
+            // Verify no moves were made
+            _mockBoard.Verify(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<char>()), Times.Never);
         }
 
         /// <summary>

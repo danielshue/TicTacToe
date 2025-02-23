@@ -1,5 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TicTacToe
 {
@@ -23,7 +25,40 @@ namespace TicTacToe
         public string ReadLine() => Console.ReadLine();
 
         /// <inheritdoc />
-        public ConsoleKeyInfo ReadKey(bool intercept) => Console.ReadKey(intercept);
+        public ConsoleKeyInfo ReadKey(bool intercept) => ReadKey(intercept, default);
+
+        /// <inheritdoc />
+        public ConsoleKeyInfo ReadKey(bool intercept, CancellationToken cancellationToken = default)
+        {
+            if (cancellationToken == default)
+                return Console.ReadKey(intercept);
+
+            try
+            {
+                var task = Task.Run(() => 
+                {
+                    try
+                    {
+                        return Console.ReadKey(intercept);
+                    }
+                    catch (Exception) when (cancellationToken.IsCancellationRequested)
+                    {
+                        throw new OperationCanceledException(cancellationToken);
+                    }
+                }, cancellationToken);
+
+                task.Wait(cancellationToken);
+                return task.Result;
+            }
+            catch (OperationCanceledException)
+            {
+                return new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false);
+            }
+            catch (AggregateException ae) when (ae.InnerException is OperationCanceledException)
+            {
+                return new ConsoleKeyInfo('\0', ConsoleKey.Escape, false, false, false);
+            }
+        }
 
         /// <inheritdoc />
         public void Write(string value) => Console.Write(value);

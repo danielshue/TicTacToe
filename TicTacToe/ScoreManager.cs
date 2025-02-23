@@ -16,6 +16,11 @@ namespace TicTacToe
             _score = score;
         }
 
+        // Constructor added to initialize Score and avoid null reference errors
+        public ScoreManager() => Score = new Score();
+
+        public IScore Score { get; set; }
+
         /// <inheritdoc />
         public void UpdateScore(Player player) {
             if (player == _score.Player1) {

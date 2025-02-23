@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Windows Machine": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}

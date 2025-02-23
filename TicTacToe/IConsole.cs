@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace TicTacToe
 {
@@ -38,6 +39,14 @@ namespace TicTacToe
         /// <param name="intercept">Determines whether to display the pressed key in the console window.</param>
         /// <returns>Information about the pressed key.</returns>
         ConsoleKeyInfo ReadKey(bool intercept);
+
+        /// <summary>
+        /// Obtains the next character or function key pressed by the user.
+        /// </summary>
+        /// <param name="intercept">Determines whether to display the pressed key in the console window.</param>
+        /// <param name="cancellationToken">Optional token to cancel the operation.</param>
+        /// <returns>Information about the pressed key.</returns>
+        ConsoleKeyInfo ReadKey(bool intercept, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Writes the specified string value to the console output stream.

@@ -128,40 +128,90 @@ namespace TicTacToe
         public void PlayerMove(Player currentPlayer)
         {
             bool validMove = false;
-            while (!validMove)
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // 30 second timeout per move
+
+            try
             {
-                DisplayBoard(CurrentRow, CurrentCol);
-                SetCursorPosition(0, 10);
-                _console.Write($"{currentPlayer.Name}'s turn ({currentPlayer.Symbol}). Use arrow keys to move, Enter to confirm: ");
-                
-                var key = _console.ReadKey(true);
-                
-                switch (key.Key)
+                while (!validMove && !cts.Token.IsCancellationRequested)
                 {
-                    case ConsoleKey.UpArrow when CurrentRow > 0:
-                        CurrentRow--;
-                        break;
-                    case ConsoleKey.DownArrow when CurrentRow < ITicTacToeBoard.BoardSize - 1:
-                        CurrentRow++;
-                        break;
-                    case ConsoleKey.LeftArrow when CurrentCol > 0:
-                        CurrentCol--;
-                        break;
-                    case ConsoleKey.RightArrow when CurrentCol < ITicTacToeBoard.BoardSize - 1:
-                        CurrentCol++;
-                        break;
-                    case ConsoleKey.Enter:
-                        if (Board.IsCellEmpty(CurrentRow, CurrentCol))
+                    DisplayBoard(CurrentRow, CurrentCol);
+                    SetCursorPosition(0, 10);
+                    _console.Write($"{currentPlayer.Name}'s turn ({currentPlayer.Symbol}). Use arrow keys to move, Enter to confirm: ");
+                    
+                    var key = _console.ReadKey(true, cts.Token);
+                    
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.UpArrow when CurrentRow > 0:
+                            CurrentRow--;
+                            break;
+                        case ConsoleKey.DownArrow when CurrentRow < ITicTacToeBoard.BoardSize - 1:
+                            CurrentRow++;
+                            break;
+                        case ConsoleKey.LeftArrow when CurrentCol > 0:
+                            CurrentCol--;
+                            break;
+                        case ConsoleKey.RightArrow when CurrentCol < ITicTacToeBoard.BoardSize - 1:
+                            CurrentCol++;
+                            break;
+                        case ConsoleKey.Enter:
+                            if (Board.IsCellEmpty(CurrentRow, CurrentCol))
+                            {
+                                validMove = Board.PlaceSymbol(CurrentRow, CurrentCol, currentPlayer.Symbol);
+                                if (validMove) return;
+                            }
+                            break;
+                        case ConsoleKey.Escape:
+                            cts.Cancel();
+                            break;
+                    }
+
+                    if (!validMove && !cts.Token.IsCancellationRequested)
+                    {
+                        Clear();
+                        DisplayScore();
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Handle timeout or cancellation
+            }
+
+            // If we reach here without a valid move (timeout/cancel), try to find any available spot
+            if (!validMove)
+            {
+                // Try each cell until we find an empty one
+                for (int i = 0; i < ITicTacToeBoard.BoardSize && !validMove; i++)
+                {
+                    for (int j = 0; j < ITicTacToeBoard.BoardSize && !validMove; j++)
+                    {
+                        if (Board.IsCellEmpty(i, j))
                         {
-                            validMove = Board.PlaceSymbol(CurrentRow, CurrentCol, currentPlayer.Symbol);
+                            validMove = Board.PlaceSymbol(i, j, currentPlayer.Symbol);
+                            if (validMove)
+                            {
+                                CurrentRow = i;
+                                CurrentCol = j;
+                                Clear();
+                                DisplayScore();
+                                DisplayBoard(CurrentRow, CurrentCol); // Show final position
+                                SetCursorPosition(0, 10);
+                                _console.WriteLine($"Move automatically placed at position {(char)('A' + i)}{j + 1} due to timeout.");
+                                return;
+                            }
                         }
-                        break;
+                    }
                 }
 
                 if (!validMove)
                 {
+                    // If we get here, there were no valid moves available
                     Clear();
                     DisplayScore();
+                    DisplayBoard(-1, -1); // Show board without highlighting
+                    SetCursorPosition(0, 10);
+                    _console.WriteLine("No valid moves available.");
                 }
             }
         }
