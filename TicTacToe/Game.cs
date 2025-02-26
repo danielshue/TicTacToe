@@ -72,6 +72,9 @@ namespace TicTacToe
             _userInterface.Score = score ?? throw new InvalidOperationException("Score cannot be null after initialization");
             _scoreManager = new ScoreManager(score);
             _computerPlayer = new ComputerPlayer(_userInterface.Board, _difficultyLevel);
+
+            // Ask for player choice
+            AskForPlayerChoice();
         }
 
         /// <summary>
@@ -192,6 +195,29 @@ namespace TicTacToe
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Prompts the user for their choice of X or O and sets the players accordingly.
+        /// </summary>
+        private void AskForPlayerChoice()
+        {
+            char choice;
+            do
+            {
+                choice = _userInterface.GetPlayersSymbol();
+            } while (choice != 'X' && choice != 'O');
+
+            if (choice == 'X')
+            {
+                _userInterface.Score.Player1.Symbol = 'X';
+                _userInterface.Score.Player2.Symbol = 'O';
+            }
+            else
+            {
+                _userInterface.Score.Player1.Symbol = 'O';
+                _userInterface.Score.Player2.Symbol = 'X';
+            }
         }
     }
 }

@@ -246,7 +246,7 @@ namespace TicTacToe
             SetCursorPosition(0, 14);
             _console.Write("Do you want to play again? (y/n) ");
             string response = ReadInput().ToUpper();
-            return response.StartsWith("Y");
+            return !response.StartsWith("N");
         }
 
         /// <inheritdoc />
@@ -255,13 +255,13 @@ namespace TicTacToe
         /// <inheritdoc />
         public string GetPlayersName()
         {
-            Clear();
-            SetCursorPosition((WindowWidth - 20) / 2, 5);
+            //Clear();
+            //SetCursorPosition((WindowWidth - 20) / 2, 5);
             _console.CursorVisible = true;
-            _console.Write("Enter your name: ");
+            _console.Write("Enter your name: (Human Default) ");
             string name = ReadInput();
             _console.CursorVisible = false;
-            return string.IsNullOrWhiteSpace(name) ? "Player" : name;
+            return string.IsNullOrWhiteSpace(name) ? "Human" : name;
         }
 
         /// <inheritdoc />
@@ -309,7 +309,7 @@ namespace TicTacToe
                 if (i < ITicTacToeBoard.BoardSize - 1)
                 {
                     SetCursorPosition(centerX, 5 + i * 2);
-                    _console.WriteLine("  ─┼───┼─");
+                    _console.WriteLine("  ───┼───┼───");
                 }
             }
             
@@ -348,32 +348,12 @@ namespace TicTacToe
                 if (i < ITicTacToeBoard.BoardSize - 1)
                 {
                     SetCursorPosition(centerX, 5 + i * 2);
-                    _console.WriteLine("  ─┼───┼─");
+                    _console.WriteLine("  ───┼───┼───");
                 }
             }
             
             _console.WriteLine("\n");
         }
-
-        /// <summary>
-        /// Shows the cursor in the console.
-        /// </summary>
-        /// <remarks>
-        /// This method sets the <see cref="Console.CursorVisible"/> property to true, making the 
-        /// cursor visible in the console. It is typically used when user input is required, such as 
-        /// when prompting the player for their name or asking if they want to play again.
-        /// </remarks>
-        private void ShowCursor() => _console.CursorVisible = true;
-
-        /// <summary>
-        /// Hides the cursor in the console.
-        /// </summary>
-        /// <remarks>
-        /// This method sets the <see cref="Console.CursorVisible"/> property to false, making the cursor 
-        /// invisible in the console. It is typically used to improve the visual appearance of the console 
-        /// during game play, where the cursor might otherwise be distracting.
-        /// </remarks>
-        private void HideCursor() => _console.CursorVisible = false;
 
         /// <inheritdoc />
         public DifficultyLevel PromptDifficultyLevel()
@@ -384,7 +364,7 @@ namespace TicTacToe
             _console.WriteLine("1. Easy");
             _console.WriteLine("2. Medium");
             _console.WriteLine("3. Hard");
-            _console.Write("\nEnter choice (1-3): ");
+            _console.Write("\nEnter choice (1-3) (Default: Hard): ");
 
             while (true)
             {
@@ -395,15 +375,24 @@ namespace TicTacToe
                     case "2": return DifficultyLevel.Medium;
                     case "3": return DifficultyLevel.Hard;
                     default:
-                        SetCursorPosition(0, 11);
-                        SetForegroundColor("red");
-                        _console.WriteLine("Invalid choice! Enter 1, 2, or 3.");
-                        ResetColor();
-                        SetCursorPosition(0, 9);
-                        _console.Write("Enter choice (1-3): ");
-                        break;
+                        return DifficultyLevel.Hard;
                 }
             }
         }
+
+        public char GetPlayersSymbol()
+        {
+            while (true)
+            {
+                _console.Write("Do you want to play as X or O? (X goes first and is default - GetPlayersSymbol method): ");
+                var input = _console.ReadLine()?.ToUpper().Trim();
+                if (input == "X" || input == "O")
+                {
+                    return input[0];
+                } else {
+                    return 'X';
+                }
+            }
+        }        
     }
 }

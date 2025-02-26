@@ -42,6 +42,8 @@ namespace TicTacToe.Tests
         {
             _mockUI = new Mock<ITickTacToeUI>();
             _mockUI.Setup(ui => ui.GetPlayersName()).Returns("TestPlayer");
+            // Default to X for existing tests
+            _mockUI.Setup(ui => ui.GetPlayersSymbol()).Returns('X');
             _gameInitializer = new GameInitializer();
         }
 
@@ -139,6 +141,65 @@ namespace TicTacToe.Tests
             // Assert
             Assert.AreEqual(0, player1.NumberOfWins);
             Assert.AreEqual(0, player2.NumberOfWins);
+        }
+
+        [TestMethod]
+        public void InitializeGame_WhenPlayerChoosesX_ShouldCreatePlayersCorrectly()
+        {
+            // Assert setup is complete
+            Assert.IsNotNull(_mockUI);
+            Assert.IsNotNull(_gameInitializer);
+
+            // Set up mock to return X as player's choice
+            _mockUI.Setup(ui => ui.GetPlayersSymbol()).Returns('X');
+
+            // Act
+            var (player1, player2, score) = _gameInitializer.InitializeGame(_mockUI.Object);
+
+            // Assert
+            Assert.AreEqual('X', player1.Symbol);
+            Assert.AreEqual("TestPlayer", player1.Name);
+            Assert.AreEqual('O', player2.Symbol);
+            Assert.AreEqual("Computer", player2.Name);
+            Assert.AreEqual(player1, score.Player1);
+            Assert.AreEqual(player2, score.Player2);
+        }
+
+        [TestMethod]
+        public void InitializeGame_WhenPlayerChoosesO_ComputerShouldBeFirstPlayer()
+        {
+            // Assert setup is complete
+            Assert.IsNotNull(_mockUI);
+            Assert.IsNotNull(_gameInitializer);
+
+            // Set up mock to return O as player's choice
+            _mockUI.Setup(ui => ui.GetPlayersSymbol()).Returns('O');
+
+            // Act
+            var (player1, player2, score) = _gameInitializer.InitializeGame(_mockUI.Object);
+
+            // Assert
+            Assert.AreEqual('X', player1.Symbol);
+            Assert.AreEqual("Computer", player1.Name);
+            Assert.AreEqual('O', player2.Symbol);
+            Assert.AreEqual("TestPlayer", player2.Name);
+            Assert.AreEqual(player1, score.Player1);
+            Assert.AreEqual(player2, score.Player2);
+        }
+
+        [TestMethod]
+        public void InitializeGame_ShouldCallGetPlayersSymbolOnce()
+        {
+            // Arrange
+            var mockUI = new Mock<ITickTacToeUI>();
+            mockUI.Setup(ui => ui.GetPlayersSymbol()).Returns('X');
+            var gameInitializer = new GameInitializer();
+
+            // Act
+            gameInitializer.InitializeGame(mockUI.Object);
+
+            // Assert
+            mockUI.Verify(ui => ui.GetPlayersSymbol(), Times.Once);
         }
     }
 }

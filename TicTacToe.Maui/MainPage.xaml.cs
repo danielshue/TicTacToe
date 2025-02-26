@@ -50,6 +50,11 @@ public partial class MainPage : ContentPage, ITickTacToeUI
         MainThread.BeginInvokeOnMainThread(InitializeGameAsync);
     }
 
+    public char PromptPlayerChoice()
+    {
+        return GetPlayersSymbol();
+    }
+
     private async void InitializeGameAsync()
     {
         try
@@ -59,8 +64,10 @@ public partial class MainPage : ContentPage, ITickTacToeUI
             _gameCts = new CancellationTokenSource();
 
             var playerName = await GetPlayersNameAsync();
-            var player1 = new Player('X', playerName);
-            var player2 = new Player('O', "Computer");
+            var playerSymbol = GetPlayersSymbol();
+            var computerSymbol = playerSymbol == 'X' ? 'O' : 'X';
+            var player1 = new Player(playerSymbol, playerName);
+            var player2 = new Player(computerSymbol, "Computer");
             Score = new Score(player1, player2);
 
             var difficulty = await PromptDifficultyLevelAsync();
@@ -361,6 +368,24 @@ public partial class MainPage : ContentPage, ITickTacToeUI
 
             return string.IsNullOrWhiteSpace(name) ? "Player" : name;
         });
+    }
+
+    public async Task<char> GetPlayersSymbolAsync()
+    {
+        bool result = await DisplayAlert(
+            "Choose Your Symbol",
+            "Do you want to play as X? (X goes first)",
+            "Yes (X)",
+            "No (O)"
+        );
+        return result ? 'X' : 'O';
+    }
+
+    public char GetPlayersSymbol()
+    {
+        // Since we can't block on async calls in sync methods,
+        // we'll use GetAwaiter().GetResult() pattern
+        return GetPlayersSymbolAsync().GetAwaiter().GetResult();
     }
 
     private void NewGameButton_Clicked(object sender, EventArgs e)

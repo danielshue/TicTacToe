@@ -86,6 +86,7 @@ namespace TicTacToe.Tests
             _mockUI.Setup(ui => ui.PlayerMove(It.IsAny<Player>())).Callback(() => _board.PlaceSymbol(0, 0, 'X'));
             _mockUI.Setup(ui => ui.HandleDraw()).Verifiable();
             _mockUI.Setup(ui => ui.DisplayPlayerWin(It.IsAny<Player>())).Verifiable();
+            _mockUI.Setup(ui => ui.GetPlayersSymbol()).Returns('X');
             
             // Set up initializer mock
             _mockInitializer = new Mock<IGameInitializer>();
@@ -98,6 +99,7 @@ namespace TicTacToe.Tests
         /// by verifying that the computer player sometimes misses obvious winning moves.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldUseEasyDifficulty_WhenSpecified()
         {
             // Arrange
@@ -127,6 +129,7 @@ namespace TicTacToe.Tests
         /// by verifying that the computer player takes optimal moves.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldUseHardDifficulty_ByDefault()
         {
             // Arrange
@@ -144,6 +147,7 @@ namespace TicTacToe.Tests
         /// Tests that medium difficulty correctly blocks winning moves and takes winning opportunities.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldImplementMediumDifficulty_Correctly()
         {
             // Arrange
@@ -174,6 +178,7 @@ namespace TicTacToe.Tests
         /// Tests that the game correctly handles a draw situation.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldHandleDraw_Correctly()
         {
             // Arrange
@@ -198,6 +203,7 @@ namespace TicTacToe.Tests
         /// - UI implementation receives the difficulty update request
         /// </remarks>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldUpdateDifficultyLevel_WhenPrompted()
         {
             // Arrange
@@ -217,6 +223,7 @@ namespace TicTacToe.Tests
         /// Tests that the game properly initializes the board at the start.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldInitializeBoard_WhenStarting()
         {
             // Arrange
@@ -237,6 +244,7 @@ namespace TicTacToe.Tests
         /// Tests that the game properly handles player wins.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldHandlePlayerWin_Correctly()
         {
             // Arrange
@@ -261,6 +269,7 @@ namespace TicTacToe.Tests
         /// - Score tracking correctly switches current player
         /// </remarks>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldAlternatePlayers_BetweenTurns()
         {
             // Arrange
@@ -285,6 +294,7 @@ namespace TicTacToe.Tests
         /// Tests that the game properly handles replay functionality.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldHandleReplay_Correctly()
         {
             // Arrange
@@ -314,6 +324,7 @@ namespace TicTacToe.Tests
         /// - UI state is properly synchronized
         /// </remarks>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldMaintainGameState_BetweenRounds()
         {
             // Arrange
@@ -343,6 +354,7 @@ namespace TicTacToe.Tests
         /// Tests that the ContinuePlaying property works correctly in the Game class.
         /// </summary>
         [TestMethod]
+        [Timeout(1000)]  // 1 second timeout
         public void Game_ShouldSetContinuePlaying_ToFalse_WhenGameEnds()
         {
             // Arrange

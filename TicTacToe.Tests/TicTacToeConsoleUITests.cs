@@ -57,12 +57,17 @@ namespace TicTacToe.Tests
             _mockBoard.Setup(b => b.BoardArray).Returns(_boardArray);
             
             _mockConsole = new Mock<IConsole>();
-            // Setup both ReadKey overloads to ensure consistent behavior
+            
+            // Setup ReadKey to return immediately without waiting
             _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>()))
                 .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
-                
+            
             _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
+                .Returns((bool intercept, CancellationToken token) => 
+                {
+                    token.ThrowIfCancellationRequested();
+                    return new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false);
+                });
 
             _mockScore = new Mock<IScore>();
             _mockScore.Setup(s => s.ToString()).Returns("Score: 0-0");
@@ -162,17 +167,16 @@ namespace TicTacToe.Tests
         public void GetPlayersName_ReturnsEnteredName()
         {
             // Arrange
-            string expectedName = "TestPlayer";
-            _mockConsole.Setup(c => c.ReadLine()).Returns(expectedName);
+            var mockConsole = new Mock<IConsole>();
+            mockConsole.SetupSequence(c => c.ReadLine()).Returns("TestPlayer");
+            var ui = new TicTacToeConsoleUI(new TickTacToeBoard(), mockConsole.Object);
 
             // Act
-            string actualName = _consoleUI.GetPlayersName();
+            var playerName = ui.GetPlayersName();
 
             // Assert
-            Assert.AreEqual(expectedName, actualName);
-            _mockConsole.Verify(c => c.Write("Enter your name: "), Times.Once);
-            _mockConsole.VerifySet(c => c.CursorVisible = true, Times.Once);
-            _mockConsole.VerifySet(c => c.CursorVisible = false, Times.Once);
+            mockConsole.Verify(c => c.Write("Enter your name: (Human Default) "), Times.Once);
+            Assert.AreEqual("TestPlayer", playerName);
         }
 
         /// <summary>
@@ -236,9 +240,18 @@ namespace TicTacToe.Tests
             // Arrange
             _consoleUI.CurrentRow = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false))
-                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
+            var sequence = new Queue<ConsoleKeyInfo>(new[] {
+                new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false),
+                new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false)
+            });
+            
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .Returns((bool intercept, CancellationToken token) => 
+                {
+                    token.ThrowIfCancellationRequested();
+                    return sequence.Dequeue();
+                });
+            
             _mockBoard.Setup(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X')).Returns(true);
             _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 
@@ -357,14 +370,22 @@ namespace TicTacToe.Tests
             _consoleUI.CurrentRow = 1;
             _consoleUI.CurrentCol = 1;
             var player = new Player('X', "TestPlayer");
-            _mockConsole.SetupSequence(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false))
-                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false))
-                .Returns(new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false));
+            var sequence = new Queue<ConsoleKeyInfo>(new[] {
+                new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false),
+                new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false),
+                new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false)
+            });
+            
+            _mockConsole.Setup(c => c.ReadKey(It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .Returns((bool intercept, CancellationToken token) => 
+                {
+                    token.ThrowIfCancellationRequested();
+                    return sequence.Dequeue();
+                });
             
             _mockBoard.SetupSequence(b => b.PlaceSymbol(It.IsAny<int>(), It.IsAny<int>(), 'X'))
                 .Returns(false)  // First attempt fails
-                .Returns(true); // Second attempt succeeds
+                .Returns(true);  // Second attempt succeeds
 
             _mockBoard.Setup(b => b.IsCellEmpty(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
 

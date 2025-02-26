@@ -11,9 +11,9 @@ namespace TicTacToe
         public int NumberOfWins { get; set; }
 
         /// <summary>
-        /// Gets the symbol (X or O) used by this player.
+        /// Gets or sets the symbol (X or O) used by this player.
         /// </summary>
-        public char Symbol { get; }
+        public char Symbol { get; set; }
 
         /// <summary>
         /// Gets the name of this player.

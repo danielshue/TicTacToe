@@ -34,10 +34,19 @@ namespace TicTacToe
                 return (userInterface.Score.Player1, userInterface.Score.Player2, (Score)userInterface.Score);
             }
 
-            var player1 = new Player('X', userInterface.GetPlayersName());
-            var player2 = new Player('O', "Computer");
-            var score = new Score(player1, player2);
-            return (player1, player2, score);
+            char playerSymbol = userInterface.GetPlayersSymbol();
+            char computerSymbol = playerSymbol == 'X' ? 'O' : 'X';
+            
+            var humanPlayer = new Player(playerSymbol, userInterface.GetPlayersName());
+            var computerPlayer = new Player(computerSymbol, "Computer");
+            
+            // If player chose O, computer (X) goes first
+            var score = new Score(
+                playerSymbol == 'X' ? humanPlayer : computerPlayer,
+                playerSymbol == 'X' ? computerPlayer : humanPlayer
+            );
+            
+            return (score.Player1, score.Player2, score);
         }
     }
 }

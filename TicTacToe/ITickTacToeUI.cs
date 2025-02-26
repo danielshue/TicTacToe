@@ -134,5 +134,12 @@ namespace TicTacToe
         /// </summary>
         /// <returns>The selected difficulty level.</returns>
         DifficultyLevel PromptDifficultyLevel();
+
+        /// <summary>
+        /// Gets the player's choice of symbol (X or O)
+        /// </summary>
+        /// <returns>The symbol chosen by the player ('X' or 'O')</returns>
+        char GetPlayersSymbol();
+
     }
 }

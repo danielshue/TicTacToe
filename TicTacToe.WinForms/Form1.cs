@@ -520,5 +520,21 @@ namespace TicTacToe.WinForms
         public void SetBackgroundColor(string color) { }
         public void SetForegroundColor(string color) { }
         public void SetCursorPosition(int left, int top) { }
+
+        public char GetPlayersSymbol()
+        {
+            var result = MessageBox.Show(
+                "Do you want to play as X? (X goes first)\nClick Yes for X, No for O",
+                "Choose Your Symbol",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+            return result == DialogResult.Yes ? 'X' : 'O';
+        }
+
+        public char PromptPlayerChoice()
+        {
+            return GetPlayersSymbol();
+        }
     }
 }

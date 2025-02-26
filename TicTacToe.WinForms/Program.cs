@@ -44,8 +44,10 @@ namespace TicTacToe.WinForms
             
             // Initialize game components before showing form
             var playerName = form.GetPlayersName(); // Prompt once
-            var player1 = new Player('X', playerName);
-            var player2 = new Player('O', "Computer");
+            var playerSymbol = form.GetPlayersSymbol();
+            var computerSymbol = playerSymbol == 'X' ? 'O' : 'X';
+            var player1 = new Player(playerSymbol, playerName);
+            var player2 = new Player(computerSymbol, "Computer");
             form.Score = new Score(player1, player2);
             
             // Show form
